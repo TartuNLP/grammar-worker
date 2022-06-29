@@ -18,10 +18,6 @@ The worker can be set up using the [`grammar-worker`](https://ghcr.io/tartunlp/g
 image. This image contains only the environment setup and code to run the models, and is designed to be used in a CPU
 environment. The container should be configured using the following parameters:
 
-- Volumes:
-    - `/app/models/` - the image does not contain the model files and these must be attached as described in
-      [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models).
-
 - Environment variables:
     - Variables that configure the connection to a [RabbitMQ message broker](https://www.rabbitmq.com/):
         - `MQ_USERNAME` - RabbitMQ username
