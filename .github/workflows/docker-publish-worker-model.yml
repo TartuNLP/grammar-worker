@@ -11,6 +11,7 @@ on:
         description: "The model image to use."
         required: true
         type: string
+        default: "ghcr.io/tartunlp/grammar-model:et"
       model_flavor:
         description: "The model's flavor, used as image tag suffix."
         required: true
