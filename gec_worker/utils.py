@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import re
 
 from nltk import sent_tokenize
@@ -9,13 +9,22 @@ from .dataclasses import Correction, Span, Replacement
 splitter = re.compile(r'(\s+)')
 
 
-def sentence_tokenize(text: str) -> (List, List):
+def sentence_tokenize(text: str, max_pos: Optional[int] = None) -> (List, List):
     """
     Split text into sentences or tokens, and save info about delimiters between them to restore linebreaks,
     whitespaces, etc.
     """
     delimiters = []
-    tokens = [sent.strip() for sent in sent_tokenize(text)]
+    sentences = [sent.strip() for sent in sent_tokenize(text)]
+
+    tokens = []
+    if max_pos is not None:
+        for i, sentence in enumerate(sentences):
+            while sentence:
+                tokens.append(sentence[:max_pos])
+                sentence = sentence[max_pos:]
+    else:
+        tokens = sentences
 
     if len(tokens) == 0:
         return [''], ['']

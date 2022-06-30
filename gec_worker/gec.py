@@ -35,7 +35,10 @@ class GEC:
                                     tgt_language=self.model_config.target_language)
 
     def process_request(self, request: Request) -> Response:
-        sentences, delimiters = sentence_tokenize(request.text)
+        sentences, delimiters = sentence_tokenize(
+            request.text,
+            self.model.max_positions[f"{self.source_language}-{self.target_language}"][0]
+        )
         predictions = [correction.strip() if sentences[idx] != '' else '' for idx, correction in enumerate(
             self.correct(sentences))]
 
