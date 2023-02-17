@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from gec_worker import MQConsumer, GEC, read_model_config
 
 parser = ArgumentParser(
-    description="A neural grammatical error correction worker that processes incoming translation requests via "
+    description="A neural grammatical error correction worker that processes incoming requests via "
                 "RabbitMQ."
 )
 parser.add_argument('--model-config', type=FileType('r'), default='models/config.yaml',

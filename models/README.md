@@ -1,14 +1,17 @@
 # Grammatical error correction models
 
 Models are either built into the image or can be attached to the
-main [grammar-worker](https://github.com/tartunlp/grammar-worker) container by mounting a volume at `/app/models/`.
+main [grammar-worker](https://github.com/tartunlp/grammar-worker) container by mounting a volume at `/app/models/`. When
+running locally, they should be placed in the `models/` directory.
+
+You can download model files from the [releases page](https://github.com/TartuNLP/grammar-worker/releases).
 
 ## Model configuration
 
-By default, the `grammar-worker` looks for a `config.yaml` file on the `/app/models` volume (the `models/` directory
-of the repository). This file should contain the following keys:
+By default, the application looks for a `config.yaml` file in the `/models` directory
+of the repository. This file should contain the following keys:
 
-- `language` - ISO language code
+- `language` - 2-letter ISO language code
 - `checkpoint` - path of the model checkpoint file (usually named `checkpoint_best.pt`)
 - `dict_dir` - the directory path that contains the model dictionary files (name pattern: `dict.{lang}.txt`)
 - `sentencepiece_dir` - the directory that contains sentencepiece models
@@ -18,7 +21,7 @@ of the repository). This file should contain the following keys:
 
 ### Configuration samples
 
-Sample configuration for a general domain Estonian-English single direction model:
+Sample configuration for an Estonian model:
 
 ```
 language: et

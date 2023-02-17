@@ -22,7 +22,7 @@ class MQConfig(BaseSettings):
 
 class WorkerConfig(BaseSettings):
     """
-    Imports general workr configuration from environment variables
+    Imports general worker configuration from environment variables
     """
     max_input_length: int = 10000
 
@@ -32,12 +32,12 @@ class WorkerConfig(BaseSettings):
 
 class ModelConfig(BaseModel):
     language: str  # actual ISO input language code
-    checkpoint_path: str = "models/checkpoint_best.pt"
+    checkpoint: str = "models/checkpoint_best.pt"
     dict_dir: str = "models/dicts/"
     sentencepiece_dir: str = "models/sentencepiece/"
     sentencepiece_prefix: str = "sp-model"
-    source_language: str = "et0"  # input language code
-    target_language: str = "et1"  # target language code
+    source_language: str = "et0"  # input language code in the model
+    target_language: str = "et1"  # target language code in the model
 
 
 def read_model_config(file_path: str) -> ModelConfig:

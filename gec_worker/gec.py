@@ -22,7 +22,7 @@ class GEC:
 
         sentencepiece_path = os.path.join(self.model_config.sentencepiece_dir, self.model_config.sentencepiece_prefix)
         self.model = ModularHubInterface.from_pretrained(
-            model_path=self.model_config.checkpoint_path,
+            model_path=self.model_config.checkpoint,
             sentencepiece_prefix=sentencepiece_path,
             dictionary_path=self.model_config.dict_dir)
         self.source_language = self.model_config.source_language

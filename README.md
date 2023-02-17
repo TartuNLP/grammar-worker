@@ -8,7 +8,7 @@ custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairs
 
 The Estonian GEC worker can be used by running the prebuilt images published alongside this repository.
 
-There are two seprate images:
+There are two separate images:
 
 - [`grammar-worker`](https://ghcr.io/tartunlp/grammar-worker) (documented below)
 - [`grammar-model`](https://ghcr.io/tartunlp/grammar-model)
@@ -54,35 +54,51 @@ environment. The container should be configured using the following parameters:
 When building the image, the model can be built with different targets. BuildKit should be enabled to skip any unused
 stages of the build.
 
+Final targets:
+
 - `worker-base` - the worker code without any models.
-- `worker-model` - a worker with an included model. Requires **one** of the following build-time arguments:
+- `worker-model` - a worker with an included model. Requires the following build-time argument:
     - `MODEL_IMAGE` - the image name where the model is copied from. For example any of
-      the [`translation-model`](https://ghcr.io/TartuNLP/grammar-model) images.
-    - `MODEL_CONFIG_FILE` - path to the model configuration file, for example `models/general.yaml`. The file must
-      contain the otherwise optional key `huggingface` to download the model or the build will fail.
+      the [`grammar-model`](https://ghcr.io/TartuNLP/grammar-model) images. By default, uses the `model-cp` stage (
+      described below).
+
+Intermediate targets:
 
 - `env` - an intermediate build stage with all packages installed, but no code.
 - `model-cp` - images that only contain model files and configuration. The separate stage is used to cache this step and
   speed up builds because model files can be very large. Published
-  at [`translation-model`](https://ghcr.io/TartuNLP/grammar-model). Alternatively, these can be used
-  as init containers to copy models over during startup, but this is quite slow and not recommended.
+  at [`grammar-model`](https://ghcr.io/TartuNLP/grammar-model). Alternatively, these can be used
+  as init containers to copy models over during startup. Requires the following build-time argument:
+    - `MODEL_DIR` - the directory where the model files are located. By default, uses the `models/` directory.
 - `model` - an alias for the model image, the value of `MODEL_IMAGE` or `model-cp` by default.
 
 ## Manual / development setup
 
 For a manual setup, please refer to the included Dockerfile and the environment specification described in
 `requirements/requirements.txt`.
+
+You can download model files from the [releases page](https://github.com/TartuNLP/grammar-worker/releases).
 Additionally, [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models) describes how models
 should be set up correctly.
 
 To initialize the sentence splitting functionality, the following command should be run before starting the application:
 
-```python -c "import nltk; nltk.download(\"punkt\")"```
+```shell
+python -c "import nltk; nltk.download(\"punkt\")"
+```
 
 RabbitMQ and PyTorch parameters should be configured with environment variables as described above. The worker can be
 started with:
 
-```python main.py [--model-logging models/logging.yaml] [--log-logging logging/logging.ini]```
+```shell
+python main.py [--model-logging models/logging.yaml] [--log-logging logging/logging.ini]
+```
+
+Or you can run the test script which does not require RabbitMQ:
+
+```shell
+python -m unittest test.py
+```
 
 ### Performance and Hardware Requirements
 
@@ -137,3 +153,5 @@ The worker will return a response with the following parameters:
     - `status_code` – (integer) a HTTP status code, `200` by default
     - `corrections` - A list of corrections formatted as the POST request output defined in
       the [API](https://github.com/tartunlp/grammar-api). May be `null` in case `status_code!=200`
+
+
