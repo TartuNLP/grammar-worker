@@ -1,7 +1,9 @@
-# Grammatical Error Correction Worker
+# Grammatical Error Correction
 
-A component that runs a grammatical error correction (GEC) engine to process incoming requests. This implementation uses
-a Transformer-based model to normalize the input text and is based on the
+A component that runs a grammatical error correction (GEC) engine to process incoming requests. The worker is compatible
+with our [GEC API](https://ghcr.io/tartunlp/grammar-api) and can be used to process requests from RabbitMQ.
+
+This implementation uses a Transformer-based model to normalize the input text and is based on the
 custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq).
 
 ## Setup
@@ -49,6 +51,39 @@ environment. The container should be configured using the following parameters:
     - `/health/readiness`
     - `/health/liveness`
 
+### Sample configuration
+
+As the worker is designed to be used with the [GEC API](https://ghcr.io/tartunlp/grammar-api), the following docker
+compose sample configuration can be used to set up the worker and the API:
+
+```yaml
+version: '3'
+services:
+  rabbitmq:
+    image: 'rabbitmq'
+  gec_api:
+    image: ghcr.io/tartunlp/grammar-api:latest
+    environment:
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+    ports:
+      - '80:8000'
+    depends_on:
+      - rabbitmq
+    restart: always
+  gec_worker:
+    image: ghcr.io/tartunlp/grammar-worker:latest
+    environment:
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MKL_NUM_THREADS=16
+    volumes:
+      - ./grammar-worker/models:/app/models
+    depends_on:
+      - rabbitmq
+    restart: always
+```
+
 ### Building new images
 
 When building the image, the model can be built with different targets. BuildKit should be enabled to skip any unused
@@ -91,7 +126,7 @@ RabbitMQ and PyTorch parameters should be configured with environment variables 
 started with:
 
 ```shell
-python main.py [--model-logging models/logging.yaml] [--log-logging logging/logging.ini]
+python main.py [--model-config models/config.yaml] [--log-logging logging/logging.ini]
 ```
 
 Or you can run the test script which does not require RabbitMQ:
@@ -105,7 +140,7 @@ python -m unittest test.py
 The exact RAM usage depends on the model and should always be tested, but a conservative estimate is to have **8 GB of
 memory** available.
 
-The performance depends on the available CPU resources, however, this should be finetuned for the deployment
+The performance depends on the available CPU resources, however, this should be fine-tuned for the deployment
 infrastructure. By default, PyTorch will try to utilize all CPU cores to 100% and run as many threads as there are
 cores. This can cause major computational overhead if the worker is deployed on large nodes. The **number of threads
 used should be limited** using the `MKL_NUM_THREADS` environment variable or the `docker run` flag `--cpuset-cpus`.
