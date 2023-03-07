@@ -109,12 +109,17 @@ Intermediate targets:
 
 ## Manual / development setup
 
-For a manual setup, please refer to the included Dockerfile and the environment specification described in
-`requirements/requirements.txt`.
+For a manual setup, use a python environment with Python 3.10 and install requirements from `requirements.txt`:
 
-You can download model files from the [releases page](https://github.com/TartuNLP/grammar-worker/releases).
-Additionally, [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models) describes how models
-should be set up correctly.
+```shell
+conda create -n grammar-worker python=3.10
+conda actvate grammar-worker
+pip install -r requirements.txt
+```
+
+You can download model files from the [releases page](https://github.com/TartuNLP/grammar-worker/releases) and extract them
+in the `models` directory.
+Additionally info about model file structure can be found in [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models).
 
 To initialize the sentence splitting functionality, the following command should be run before starting the application:
 
