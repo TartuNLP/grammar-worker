@@ -2,4 +2,5 @@
 __pycache__/
 *.iml
 models/*
+!models/*.yaml 
 !models/README.md

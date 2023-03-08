@@ -32,7 +32,7 @@ class Test(unittest.TestCase):
         from gec_worker import GEC, read_model_config
         from gec_worker.dataclasses import Response, Request
 
-        model_config = read_model_config('models/GEC-synthetic-pretrain-ut-ft/config.yaml')
+        model_config = read_model_config('models/GEC-synthetic-pretrain-ut-ft-config.yaml')
         gec = GEC(model_config)
 
         request = Request(text="Aitüma.", language='et')
@@ -48,7 +48,7 @@ class Test(unittest.TestCase):
         from gec_worker import GEC, read_model_config
         from gec_worker.dataclasses import Response, Request
 
-        model_config = read_model_config('models/GEC-noisy-nmt-ut/config.yaml')
+        model_config = read_model_config('models/GEC-noisy-nmt-ut-config.yaml')
         gec = GEC(model_config)
 
         request = Request(text="Aitüma.", language='et')
