@@ -24,7 +24,7 @@ def apply_corrections(original: str, corrections: List[Correction]):
 
 
 class Test(unittest.TestCase):
-    def test_model(self):
+    def test_translation_model(self):
         """
         Test that the model can be loaded and used.
         :return:
@@ -32,13 +32,30 @@ class Test(unittest.TestCase):
         from gec_worker import GEC, read_model_config
         from gec_worker.dataclasses import Response, Request
 
-        model_config = read_model_config('models/config.yaml')
+        model_config = read_model_config('models/GEC-synthetic-pretrain-ut-ft/config.yaml')
         gec = GEC(model_config)
 
         request = Request(text="Aitüma.", language='et')
         response = gec.process_request(request)
         pprint(asdict(response))
         self.assertIsInstance(response, Response)
+
+    def test_modular_translation_model(self):
+        """
+        Test that the model can be loaded and used.
+        :return:
+        """
+        from gec_worker import GEC, read_model_config
+        from gec_worker.dataclasses import Response, Request
+
+        model_config = read_model_config('models/GEC-noisy-nmt-ut/config.yaml')
+        gec = GEC(model_config)
+
+        request = Request(text="Aitüma.", language='et')
+        response = gec.process_request(request)
+        pprint(asdict(response))
+        self.assertIsInstance(response, Response)
+
 
     def test_generate_spans(self):
         """
