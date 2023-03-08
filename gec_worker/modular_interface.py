@@ -45,34 +45,6 @@ class ModularHubInterface(Module):
         self.register_buffer("_float_tensor", torch.tensor([0], dtype=torch.float))
 
     @classmethod
-    def from_pretrained_x(
-            cls,
-            model_path: str,
-            sentencepiece_prefix: str,
-            dictionary_path: str,
-    ):
-        x = hub_utils.from_pretrained(
-            "./",
-            checkpoint_file=model_path,
-            archive_map={},
-            data_name_or_path=dictionary_path,
-            task="multilingual_translation"
-        )
-
-        sp_models = {
-            lang: SentencePieceProcessor(
-                model_file=f"{sentencepiece_prefix}.{lang}.model"
-            ) for lang in x["task"].langs
-        }
-
-        return cls(
-            models=x["models"],
-            task=x["task"],
-            cfg=x["args"],
-            sp_models=sp_models,
-        )
-
-    @classmethod
     def from_pretrained(
             cls,
             model_path: str,
