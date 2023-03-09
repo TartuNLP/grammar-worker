@@ -35,20 +35,63 @@ class Test(unittest.TestCase):
         model_config = read_model_config('models/config.yaml')
         gec = GEC(model_config)
 
-        request = Request(text="Aitüma.", language='et')
+        request = Request(text="Juku joksis koolis. Aitأ¼ma.", language='et')
         response = gec.process_request(request)
         pprint(asdict(response))
         self.assertIsInstance(response, Response)
+
+
+    def test_spell_model(self):
+        """
+        Test that the model can be loaded and used.
+        :return:
+        """
+        from gec_worker import spelling
+        from gec_worker.dataclasses import Response, Request
+
+#        spelling1 = spelling.Spelling("etnc19_web_2019.bin")
+        spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000.bin")
+#        spelling1 = spelling.Spelling("etnc19_reference_corpus_model_6000000_lines.bin")
+#        spelling1 = spelling.Spelling("etnc19_wikipedia2017.bin")
+
+        request = Request(text="Juku joksis koolis. Aitأ¼ma.", language='et')
+        response = spelling1.process_request(request)
+        pprint(asdict(response))
+        self.assertIsInstance(response, Response)
+
+
+    def test_multiple_correction_model(self):
+        """
+        Test that the model can be loaded and used.
+        :return:
+        """
+        from gec_worker import GEC, read_model_config
+        from gec_worker import spelling
+        from gec_worker.dataclasses import Response, Request
+        from gec_worker import multiple_corrections
+        model_config = read_model_config('models/config.yaml')
+        gec = GEC(model_config)
+        spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000.bin")
+        model_list=multiple_corrections.MultipleCorrections()
+        model_list.add_corrector(spelling1)
+        model_list.add_corrector(gec)
+        request = Request(text="Juku joksis koolis. Aitأ¼ma.", language='et')
+        response = model_list.process_request(request)
+        pprint(asdict(response))
+        self.assertIsInstance(response, Response)
+
+
+
 
     def test_generate_spans(self):
         """
         Test that correct differences are detected and the sentence can be restored to the target.
         :return:
         """
-        a = "Lapsed peavad näitama paremaid tulemusi, rahuldada vanemate, õetajate ja ühiskonna mis tõttu " \
-            "nõyrdfujudmisi, kuid kõik see võib tekitada lapses  stressi."
-        b = "Lapsed jah peavad näitama häid ka tulemusi, et vanemate, õpetajae ja ühiskonna nõudmisi, " \
-            "kuiyhfd kõik see võib tekitada lapses stressi."
+        a = "Lapsed peavad nأ¤itama paremaid tulemusi, rahuldada vanemate, أµetajate ja أ¼hiskonna mis tأµttu " \
+            "nأµyrdfujudmisi, kuid kأµik see vأµib tekitada lapses  stressi."
+        b = "Lapsed jah peavad nأ¤itama hأ¤id ka tulemusi, et vanemate, أµpetajae ja أ¼hiskonna nأµudmisi, " \
+            "kuiyhfd kأµik see vأµib tekitada lapses stressi."
 
         # combining sentences to test differences in both directions
         delimiters = ['', '\n\n', '']
