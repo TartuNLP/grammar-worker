@@ -40,7 +40,7 @@ class Test(unittest.TestCase):
         pprint(asdict(response))
         self.assertIsInstance(response, Response)
 
-    def test_GEC__noisy_nmt_ut_model(self):
+    def test_GEC_noisy_nmt_ut_model(self):
         """
         Test that the model can be loaded and used.
         :return:
@@ -101,7 +101,7 @@ class Test(unittest.TestCase):
         Test that correct differences are detected and the sentence can be restored to the target.
         :return:
         """
-        
+
         a = "Lapsed peavad näitama paremaid tulemusi, rahuldada vanemate, õetajate ja ühiskonna mis tõttu " \
             "nõyrdfujudmisi, kuid kõik see võib tekitada lapses  stressi."
         b = "Lapsed jah peavad näitama häid ka tulemusi, et vanemate, õpetajae ja ühiskonna nõudmisi, " \

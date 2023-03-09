@@ -9,7 +9,6 @@ def run_multiple_correction_model(source_text):
 
         # Load grammatical error correction model, use models/GEC-noisy-nmt-ut-config.yaml to use the other model
     model_config = read_model_config('models/GEC-synthetic-pretrain-ut-ft-config.yaml')
-    model_config = read_model_config('models/GEC-noisy-nmt-ut-config.yaml') 
     gec = GEC(model_config)
 
         # Load spelling model
