@@ -4,8 +4,8 @@ from typing import Dict, List, Iterator, Any, Optional
 
 from fairseq.data import Dictionary, LanguagePairDataset, FairseqDataset
 from fairseq import utils, search, hub_utils
-from fairseq.models.multilingual_transformer import MultilingualTransformerModel
-from fairseq.tasks.multilingual_translation import MultilingualTranslationTask
+from fairseq.models.transformer import TransformerModel
+from fairseq.tasks.translation import TranslationTask
 from fairseq.sequence_generator import SequenceGenerator
 
 from omegaconf import open_dict, DictConfig
@@ -22,19 +22,18 @@ logger = logging.getLogger(__name__)
 class ModularHubInterface(Module):
     def __init__(
             self,
-            models: List[MultilingualTransformerModel],
-            task: MultilingualTranslationTask,
+            models: List[TransformerModel],
+            task: TranslationTask,
             cfg: DictConfig,
             sp_models: Dict[str, SentencePieceProcessor]
     ):
         super().__init__()
-
         self.sp_models = sp_models
         self.models = ModuleList(models)
         self.task = task
         self.cfg = cfg
-        self.dicts: Dict[str, Dictionary] = task.dicts
-        self.langs = task.langs
+        self.dicts: Dict[str, Dictionary] = {cfg.task.source_lang : task.src_dict, cfg.task.target_lang : task.tgt_dict} if type(self.task) == TranslationTask else task.dicts
+        self.langs = [cfg.task.source_lang, cfg.task.target_lang] if type(self.task) == TranslationTask else task.langs
 
         for model in self.models:
             model.prepare_for_inference_(self.cfg)
@@ -51,19 +50,25 @@ class ModularHubInterface(Module):
             model_path: str,
             sentencepiece_prefix: str,
             dictionary_path: str,
+            task: str = "translation",
+            source_language: str = 'et0',
+            target_language: str = 'et',
     ):
         x = hub_utils.from_pretrained(
             "./",
             checkpoint_file=model_path,
             archive_map={},
             data_name_or_path=dictionary_path,
-            task="multilingual_translation"
+            task=task,
+            source_lang=source_language,
+            target_lang=target_language
         )
-
+        
+        all_langs = [source_language, target_language] if task == "translation" else [lang for lang in x["task"].langs]
         sp_models = {
             lang: SentencePieceProcessor(
                 model_file=f"{sentencepiece_prefix}.{lang}.model"
-            ) for lang in x["task"].langs
+            ) for lang in all_langs
         }
 
         return cls(
@@ -173,15 +178,20 @@ class ModularHubInterface(Module):
             src_lang: str,
             tgt_lang: str,
     ) -> FairseqDataset:
-        return self.task.alter_dataset_langtok(
-            LanguagePairDataset(
+        if type(self.task) == TranslationTask:
+            return LanguagePairDataset(
                 src_tokens, src_lengths, self.dicts[src_lang]
-            ),
-            src_eos=self.dicts[src_lang].eos(),
-            src_lang=src_lang,
-            tgt_eos=self.dicts[tgt_lang].eos(),
-            tgt_lang=tgt_lang,
-        )
+            )
+        else:
+            return self.task.alter_dataset_langtok(
+                LanguagePairDataset(
+                    src_tokens, src_lengths, self.dicts[src_lang]
+                ),
+                src_eos=self.dicts[src_lang].eos(),
+                src_lang=src_lang,
+                tgt_eos=self.dicts[tgt_lang].eos(),
+                tgt_lang=tgt_lang,
+            )
 
     def _build_batches(
             self,
@@ -193,19 +203,21 @@ class ModularHubInterface(Module):
             max_tokens: Optional[int] = None
     ) -> Iterator[Dict[str, Any]]:
         lengths = LongTensor([t.numel() for t in tokens])
+        max_positions = self.max_positions if type(self.task) == TranslationTask else self.max_positions[f"{src_lang}-{tgt_lang}"]
         batch_iterator = self.task.get_batch_iterator(
             dataset=self._build_dataset_for_inference(tokens, lengths, src_lang, tgt_lang),
             max_tokens=max_tokens,
             max_sentences=max_sentences,
-            max_positions=self.max_positions[f"{src_lang}-{tgt_lang}"],
+            max_positions=max_positions,
             ignore_invalid_inputs=skip_invalid_size_inputs,
             disable_iterator_cache=True,
         ).next_epoch_itr(shuffle=False)
         return batch_iterator
 
     def _build_generator(self, src_lang, tgt_lang, args):
+        used_modules = self.models if type(self.task) == TranslationTask else ModuleList([model.models[f"{src_lang}-{tgt_lang}"] for model in self.models])
         return SequenceGenerator(
-            ModuleList([model.models[f"{src_lang}-{tgt_lang}"] for model in self.models]),
+            used_modules,
             self.dicts[tgt_lang],
             beam_size=getattr(args, "beam", 5),
             max_len_a=getattr(args, "max_len_a", 0),

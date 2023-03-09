@@ -24,7 +24,10 @@ class GEC:
         self.model = ModularHubInterface.from_pretrained(
             model_path=self.model_config.checkpoint,
             sentencepiece_prefix=sentencepiece_path,
-            dictionary_path=self.model_config.dict_dir)
+            dictionary_path=self.model_config.dict_dir,
+            task=self.model_config.task,
+            source_language = self.model_config.source_language,
+            target_language=self.model_config.target_language)
         self.source_language = self.model_config.source_language
         self.target_language = self.model_config.target_language
         logger.info("All models loaded")
@@ -37,7 +40,7 @@ class GEC:
     def process_request(self, request: Request) -> Response:
         sentences, delimiters = sentence_tokenize(
             request.text,
-            self.model.max_positions[f"{self.source_language}-{self.target_language}"][0]
+            self.model.max_positions[0] if self.model_config.task == 'translation' else self.model.max_positions[f"{self.source_language}-{self.target_language}"][0]
         )
         predictions = [correction.strip() if sentences[idx] != '' else '' for idx, correction in enumerate(
             self.correct(sentences))]
