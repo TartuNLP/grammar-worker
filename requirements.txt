@@ -11,3 +11,4 @@ fastapi~=0.92.0
 uvicorn~=0.20.0
 numpy<1.24.0  # 1.24.0 is incompatible with something in the fairseq version
 jamspell~=0.0.12
+mosestokenizer≃1.2.1

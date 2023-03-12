@@ -24,6 +24,7 @@ class GEC:
         self.model = ModularHubInterface.from_pretrained(
             model_path=self.model_config.checkpoint,
             sentencepiece_prefix=sentencepiece_path,
+            truecase_model=self.model_config.truecase_model,
             dictionary_path=self.model_config.dict_dir,
             task=self.model_config.task,
             source_language = self.model_config.source_language,

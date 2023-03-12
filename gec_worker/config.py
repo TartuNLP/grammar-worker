@@ -36,6 +36,7 @@ class ModelConfig(BaseModel):
     dict_dir: str = "models/dicts/"
     sentencepiece_dir: str = "models/sentencepiece/"
     sentencepiece_prefix: str = "sp-model"
+    truecase_model: str = "models/tc-model.tc"
     source_language: str = "et0"  # input language code in the model
     target_language: str = "et1"  # target language code in the model
     task: str = "multilingual_translation" # task the model is trained on multilingual_translation/translation

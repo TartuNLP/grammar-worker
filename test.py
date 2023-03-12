@@ -34,8 +34,7 @@ class Test(unittest.TestCase):
 
         model_config = read_model_config('models/GEC-synthetic-pretrain-ut-ft-config.yaml')
         gec = GEC(model_config)
-
-        request = Request(text="Juku joksis koolis. Aitأ¼ma.", language='et')
+        request = Request(text="Juku joksis koolis. Aitüma.", language='et')
         response = gec.process_request(request)
         pprint(asdict(response))
         self.assertIsInstance(response, Response)
@@ -54,7 +53,6 @@ class Test(unittest.TestCase):
         response = gec.process_request(request)
         pprint(asdict(response))
         self.assertIsInstance(response, Response)
-
 
     def test_spell_model(self):
         """

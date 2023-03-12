@@ -1,7 +1,8 @@
 import logging
 import copy
 from typing import Dict, List, Iterator, Any, Optional
-
+from .utils import processLine, loadModel
+from mosestokenizer import MosesDetokenizer, MosesTokenizer
 from fairseq.data import Dictionary, LanguagePairDataset, FairseqDataset
 from fairseq import utils, search, hub_utils
 from fairseq.models.transformer import TransformerModel
@@ -9,7 +10,7 @@ from fairseq.tasks.translation import TranslationTask
 from fairseq.sequence_generator import SequenceGenerator
 
 from omegaconf import open_dict, DictConfig
-
+from stanza import Pipeline
 from sentencepiece import SentencePieceProcessor
 
 import torch
@@ -25,10 +26,16 @@ class ModularHubInterface(Module):
             models: List[TransformerModel],
             task: TranslationTask,
             cfg: DictConfig,
-            sp_models: Dict[str, SentencePieceProcessor]
+            sp_models: Dict[str, SentencePieceProcessor],
+            tokenizer: MosesTokenizer,
+            detokenizer: MosesDetokenizer,
+            truecaser: Dict
     ):
         super().__init__()
         self.sp_models = sp_models
+        self.tokenizer = tokenizer
+        self.detokenizer = detokenizer
+        self.truecaser = truecaser
         self.models = ModuleList(models)
         self.task = task
         self.cfg = cfg
@@ -49,6 +56,7 @@ class ModularHubInterface(Module):
             cls,
             model_path: str,
             sentencepiece_prefix: str,
+            truecase_model: str,
             dictionary_path: str,
             task: str = "translation",
             source_language: str = 'et0',
@@ -71,11 +79,19 @@ class ModularHubInterface(Module):
             ) for lang in all_langs
         }
 
+        tokenizer = MosesTokenizer('et') if task == "translation" else None
+        detokenizer = MosesDetokenizer('et') if task == "translation" else None
+        truecaser = loadModel(truecase_model) if task == "translation" else None
+
+
         return cls(
             models=x["models"],
             task=x["task"],
             cfg=x["args"],
             sp_models=sp_models,
+            tokenizer=tokenizer,
+            detokenizer=detokenizer,
+            truecaser=truecaser
         )
 
     @property
@@ -88,6 +104,12 @@ class ModularHubInterface(Module):
     def apply_bpe(self, sentence: str, language: str) -> str:
         return " ".join(self.sp_models[language].encode(sentence, out_type=str))
 
+    def truecase(self, sentence: str) -> str:
+        return processLine(self.truecaser, sentence)
+
+    def tokenize(self, sentence: str) -> str:
+        return " ".join(self.tokenizer(sentence))
+
     def string(self, tokens: Tensor, language: str) -> str:
         return self.dicts[language].string(tokens)
 
@@ -95,7 +117,18 @@ class ModularHubInterface(Module):
     def remove_bpe(sentence: str) -> str:
         return sentence.replace(" ", "").replace("\u2581", " ").strip()
 
+    @staticmethod
+    def remove_truecase(sentence: str) -> str:
+        return sentence[0].upper() + sentence[1:]
+
+    def remove_tokenization(self, sentence: str) -> str:
+        return self.detokenizer(sentence.split(" "))
+
     def encode(self, sentence: str, language: str) -> LongTensor:
+        if self.tokenizer is not None:
+            sentence = self.tokenize(sentence)
+        if self.tokenizer is not None:
+            sentence = self.truecase(sentence)
         bpe_token_sent = self.apply_bpe(sentence, language)
         logger.debug(f"Preprocessed: {sentence} into {bpe_token_sent}.")
         return self.binarize(bpe_token_sent, language)
@@ -103,6 +136,9 @@ class ModularHubInterface(Module):
     def decode(self, tokens: Tensor, language: str) -> str:
         bpe_token_sent = self.string(tokens, language)
         decoded_sent = self.remove_bpe(bpe_token_sent)
+        decoded_sent = self.remove_truecase(decoded_sent)
+        if self.detokenizer is not None:
+            decoded_sent = self.remove_tokenization(decoded_sent)
         logger.debug(f"Postprocessed: {bpe_token_sent} into {decoded_sent}.")
         return decoded_sent
 
