@@ -10,7 +10,6 @@ from fairseq.tasks.translation import TranslationTask
 from fairseq.sequence_generator import SequenceGenerator
 
 from omegaconf import open_dict, DictConfig
-from stanza import Pipeline
 from sentencepiece import SentencePieceProcessor
 
 import torch
