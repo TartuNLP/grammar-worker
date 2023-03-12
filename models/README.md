@@ -16,8 +16,10 @@ of the repository. This file should contain the following keys:
 - `dict_dir` - the directory path that contains the model dictionary files (name pattern: `dict.{lang}.txt`)
 - `sentencepiece_dir` - the directory that contains sentencepiece models
 - `sentencepiece_prefix` - the prefix used on all sentencepiece model files
+- `truecase_model` - the path for truecasing model
 - `source_language` - input langauge code (as understood by the model)
 - `target_language` - output langauge code (as understood by the model)
+- `task` - task the model has been trained on (translation or multilingual_translation)
 
 ### Configuration samples
 
@@ -25,12 +27,14 @@ Sample configuration for an Estonian model:
 
 ```
 language: et
-checkpoint: models/checkpoint_best.pt
-dict_dir: models/dicts/
-sentencepiece_dir: models/sentencepiece/
-sentencepiece_prefix: sp-model
+checkpoint: models/GEC-synthetic-pretrain-ut-ft/checkpoint_best.pt
+dict_dir: models/GEC-synthetic-pretrain-ut-ft/dicts/
+sentencepiece_dir: models/GEC-synthetic-pretrain-ut-ft/sentencepiece/
+sentencepiece_prefix: sp_model
+truecase_model: models/GEC-synthetic-pretrain-ut-ft/tc-model.tc
 source_language: et0
-target_language: et1
+target_language: et
+task: translation
 ```
 
 The configuration above matches the following folder structure:
