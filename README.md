@@ -5,10 +5,7 @@ with our [GEC API](https://ghcr.io/tartunlp/grammar-api) and can be used to proc
 
 The GEC implementation uses Transformer-based machine translation models to normalize the input text, the models are trained using custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq). 
 
-Statistical spelling correction relies on the Jamspell algorithm that analyzes word contexts based on a trigram language model.
-The project is developed by the NLP research group at the University of Tartu and the language technology research group at the Tallinn University.
-
-The project is developed by the [NLP research group](https://tartunlp.ai/) at the [University of Tartu](https://ut.ee/) and the [language technology research group](https://evkk.tlu.ee/about/people) at the [Tallinn University](https://tlu.ee).
+Statistical spelling correction relies on the Jamspell algorithm that analyzes word contexts based on a trigram language model. The project is developed by the [NLP research group](https://tartunlp.ai/) at the [University of Tartu](https://ut.ee/) and the [language technology research group](https://evkk.tlu.ee/about/people) at the [Tallinn University](https://tlu.ee).
 
 ## Setup
 
