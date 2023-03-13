@@ -144,6 +144,12 @@ Or you can run the test script which does not require RabbitMQ:
 python -m unittest test.py
 ```
 
+Alternatively, you may refer to the example usage:
+
+```shell
+python -m unittest test.py
+```
+
 ### Performance and Hardware Requirements
 
 The exact RAM usage depends on the model and should always be tested, but a conservative estimate is to have **8 GB of
