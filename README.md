@@ -1,7 +1,7 @@
 # Grammatical Error Correction
 
 This repository contains code for running Estonian spell-checking and grammatical error correction (GEC) models to process incoming requests. These error-correction models can be called individually or combined in a sequence. The worker is compatible
-with our [GEC API](https://ghcr.io/tartunlp/grammar-api) and can be used to process requests from RabbitMQ.
+with our [GEC API](https://ghcr.io/tartunlp/grammar-api) and can be used to process requests from RabbitMQ. You can find the example for offline usage in both the Colab file named `GEC_and_spell_demo.ipynb` and the Python script named `example.py`.
 
 The GEC implementation uses Transformer-based machine translation models to normalize the input text, the models are trained using custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq). 
 
