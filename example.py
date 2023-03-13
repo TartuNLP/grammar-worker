@@ -4,7 +4,7 @@ from dataclasses import asdict
 def run_multiple_correction_model(source_text):
     from gec_worker import GEC, read_model_config
     from gec_worker import spelling
-    from gec_worker.dataclasses import Response, Request
+    from gec_worker.dataclasses import Request
     from gec_worker import multiple_corrections
 
         # Load grammatical error correction model, use models/GEC-noisy-nmt-ut-config.yaml to use the other model

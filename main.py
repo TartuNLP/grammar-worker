@@ -5,14 +5,16 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from gec_worker import MQConsumer, GEC, read_model_config
+from gec_worker import MQConsumer, GEC, read_model_config, Spelling, MultipleCorrections
 
 parser = ArgumentParser(
     description="A neural grammatical error correction worker that processes incoming requests via "
                 "RabbitMQ."
 )
-parser.add_argument('--model-config', type=FileType('r'), default='models/config.yaml',
+parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GEC-synthetic-pretrain-ut-ft-config.yaml',
                     help="The model config YAML file to load.")
+parser.add_argument('--spell-model', type=FileType('r'), default='models/etnc19_reference_corpus_6000000_web_2019_600000.bin',
+                    help="The Jamspell model BIN file.")
 parser.add_argument('--log-config', type=FileType('r'), default='logging/logging.ini',
                     help="Path to log config file.")
 parser.add_argument('--port', type=int, default='8000',
@@ -35,9 +37,13 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     global mq_thread
-    model_config = read_model_config(args.model_config.name)
-    gec = GEC(model_config)
-    consumer = MQConsumer(gec=gec)
+    gec_model_config = read_model_config(args.gec_model_config.name)
+    gec = GEC(gec_model_config)
+    spelling = Spelling(args.spell_model.name)
+    corrector = MultipleCorrections()
+    corrector.add_corrector(spelling)
+    corrector.add_corrector(gec)
+    consumer = MQConsumer(corrector=corrector)
 
     mq_thread = threading.Thread(target=consumer.start)
     mq_thread.connected = False

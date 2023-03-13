@@ -13,7 +13,7 @@ from pika import credentials, BlockingConnection, ConnectionParameters
 
 from .config import mq_config
 from .dataclasses import Response, Request
-from .gec import GEC
+from .multiple_corrections import MultipleCorrections
 
 logger = logging.getLogger(__name__)
 
@@ -21,22 +21,23 @@ X_EXPIRES = 60000
 
 
 class MQConsumer:
-    def __init__(self, gec: GEC):
+    def __init__(self, corrector: MultipleCorrections, language = "et"):
         """
         Initializes a RabbitMQ consumer class that listens for requests for a specific worker and responds to
         them.
         """
-        self.gec = gec
+        self.corrector = corrector
         self.routing_keys = []
         self.queue_name = None
         self.channel = None
+        self.language = language
 
         self._generate_queue_config()
 
     def _generate_queue_config(self):
-        self.routing_keys = [f"{mq_config.exchange}.{self.gec.model_config.language}"]
+        self.routing_keys = [f"{mq_config.exchange}.{self.language}"]
         hashed = hashlib.sha256(str(self.routing_keys).encode('utf-8')).hexdigest()[:8]
-        self.queue_name = f"{mq_config.exchange}.{self.gec.model_config.language}_{hashed}"
+        self.queue_name = f"{mq_config.exchange}.{self.language}_{hashed}"
 
     def start(self):
         """
@@ -121,7 +122,7 @@ class MQConsumer:
         try:
             request = json.loads(body)
             request = Request(**request)
-            response = self.gec.process_request(request)
+            response = self.corrector.process_request(request)
         except ValidationError as error:
             response = Response(status=f'Error parsing input: {str(error)}', status_code=400)
         except Exception as e:

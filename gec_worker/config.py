@@ -31,7 +31,7 @@ class WorkerConfig(BaseSettings):
 
 
 class ModelConfig(BaseModel):
-    language: str  # actual ISO input language code
+    language: str = "et" # actual ISO input language code, deprecated
     checkpoint: str = "models/checkpoint_best.pt"
     dict_dir: str = "models/dicts/"
     sentencepiece_dir: str = "models/sentencepiece/"

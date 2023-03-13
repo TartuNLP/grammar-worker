@@ -1,4 +1,3 @@
-language: et
 checkpoint: models/GEC-synthetic-pretrain-ut-ft/checkpoint_best.pt
 dict_dir: models/GEC-synthetic-pretrain-ut-ft/dicts/
 sentencepiece_dir: models/GEC-synthetic-pretrain-ut-ft/sentencepiece/
