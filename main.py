@@ -1,30 +1,73 @@
-from pprint import pprint
-from dataclasses import asdict
+import threading
+from argparse import ArgumentParser, FileType
 
-def run_multiple_correction_model(source_text):
-    from gec_worker import GEC, read_model_config
-    from gec_worker import spelling
-    from gec_worker.dataclasses import Response, Request
-    from gec_worker import multiple_corrections
+import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
-        # Load grammatical error correction model, use models/GEC-noisy-nmt-ut-config.yaml to use the other model
-    model_config = read_model_config('models/GEC-synthetic-pretrain-ut-ft-config.yaml')
+from gec_worker import MQConsumer, GEC, read_model_config
+
+parser = ArgumentParser(
+    description="A neural grammatical error correction worker that processes incoming requests via "
+                "RabbitMQ."
+)
+parser.add_argument('--model-config', type=FileType('r'), default='models/config.yaml',
+                    help="The model config YAML file to load.")
+parser.add_argument('--log-config', type=FileType('r'), default='logging/logging.ini',
+                    help="Path to log config file.")
+parser.add_argument('--port', type=int, default='8000',
+                    help="Port used for healthcheck probes.")
+
+args = parser.parse_args()
+
+app = FastAPI()
+mq_thread = threading.Thread()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
+
+
+@app.on_event("startup")
+async def startup():
+    global mq_thread
+    model_config = read_model_config(args.model_config.name)
     gec = GEC(model_config)
+    consumer = MQConsumer(gec=gec)
 
-        # Load spelling model
-    spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000.bin")
-
-        # Make model list and add models
-    model_list=multiple_corrections.MultipleCorrections()
-    model_list.add_corrector(spelling1)
-    model_list.add_corrector(gec)
-    
-        # Input data and get result
-    request = Request(text=source_text, language='et')
-    response = model_list.process_request(request)
-    pprint(asdict(response))
-    return response.corrected_text
+    mq_thread = threading.Thread(target=consumer.start)
+    mq_thread.connected = False
+    mq_thread.consume = True
+    mq_thread.start()
 
 
-if __name__ == '__main__':
-    print(run_multiple_correction_model("Juku joksis koolis. Aitüma."))
+@app.on_event("shutdown")
+async def shutdown():
+    global mq_thread
+    mq_thread.consume = False
+
+
+@app.get('/health/readiness')
+@app.get('/health/startup')
+async def health_check():
+    # Returns 200 if models are loaded and connection to RabbitMQ is up
+    global mq_thread
+    if not mq_thread.is_alive() or not getattr(mq_thread, "connected"):
+        raise HTTPException(500)
+    return "OK"
+
+
+@app.get('/health/liveness')
+async def liveness():
+    global mq_thread
+    if not mq_thread.is_alive():
+        raise HTTPException(500)
+    return "OK"
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=args.port, log_config=args.log_config.name)
