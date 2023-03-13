@@ -27,11 +27,11 @@ Sample configuration for an Estonian model:
 
 ```
 language: et
-checkpoint: models/GEC-synthetic-pretrain-ut-ft/checkpoint_best.pt
-dict_dir: models/GEC-synthetic-pretrain-ut-ft/dicts/
-sentencepiece_dir: models/GEC-synthetic-pretrain-ut-ft/sentencepiece/
+checkpoint: models/model_name/checkpoint_best.pt
+dict_dir: models/model_name/dicts/
+sentencepiece_dir: models/model_name/sentencepiece/
 sentencepiece_prefix: sp_model
-truecase_model: models/GEC-synthetic-pretrain-ut-ft/tc-model.tc
+truecase_model: models/model_name/tc-model.tc
 source_language: et0
 target_language: et
 task: translation
@@ -40,17 +40,16 @@ task: translation
 The configuration above matches the following folder structure:
 
 ```
-models/
-├── checkpoint_best.pt
-├── config.yaml
-├── dicts
-│   ├── dict.et0.txt
-│   └── dict.et1.txt
-└── sentencepiece
-    ├── sp-model.et0.model
-    ├── sp-model.et0.vocab
-    ├── sp-model.et0.model
-    └── sp-model.et1.vocab
+models
+── model_name
+   ├── checkpoint_best.pt
+   ├── dicts
+   │   ├── dict.et0.txt
+   │   └── dict.et.txt
+   └── sentencepiece
+       ├── sp_model.et0.model
+       └── sp_model.et.model
+   └── tc-model.tc
 ```
 
 ## Available models
