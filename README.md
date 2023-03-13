@@ -12,13 +12,13 @@ The project is developed by the [NLP research group](https://tartunlp.ai/) at th
 
 ## Setup
 
-The Estonian GEC worker can be used by running the prebuilt images published alongside this repository.
+The Estonian GEC worker can be used by running the prebuilt images.
 
 There are two separate images:
 
 - [`grammar-worker`](https://ghcr.io/tartunlp/grammar-worker) (documented below)
 - [`grammar-model`](https://ghcr.io/tartunlp/grammar-model)
-  (documented in [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models))
+  (documented in `models/README.md`)
 
 The worker can be set up using the [`grammar-worker`](https://ghcr.io/tartunlp/grammar-worker)
 image. This image contains only the environment setup and code to run the models, and is designed to be used in a CPU
@@ -123,7 +123,7 @@ pip install -r requirements.txt
 
 You can download model files from the [releases page](https://github.com/TartuNLP/grammar-worker/releases) and extract them
 in the `models` directory.
-Additionally info about model file structure can be found in [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models).
+Additionally info about model file structure can be found in `models/README.md`.
 
 To initialize the sentence splitting functionality, the following command should be run before starting the application:
 
