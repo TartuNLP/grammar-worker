@@ -4,7 +4,12 @@ Models are either built into the image or can be attached to the
 main [grammar-worker](https://github.com/tartunlp/grammar-worker) container by mounting a volume at `/app/models/`. When
 running locally, they should be placed in the `models/` directory.
 
-You can download grammatical error correction model files from HuggingFace: [GEC-synthetic-pretrain-ut-ft](https://huggingface.co/tartuNLP/GEC-synthetic-pretrain-ut-ft) and [GEC-noisy-nmt-ut](https://huggingface.co/tartuNLP/GEC-noisy-nmt-ut). 
+You can download model files from HuggingFace.
+
+-  Grammatical error correction models are [GEC-synthetic-pretrain-ut-ft](https://huggingface.co/tartuNLP/GEC-synthetic-pretrain-ut-ft) and [GEC-noisy-nmt-ut](https://huggingface.co/tartuNLP/GEC-noisy-nmt-ut). 
+-  Spell-checking models are [etnc19_reference_corpus_model_6000000_lines](https://huggingface.co/Jaagup/etnc19_reference_corpus_model_6000000_lines), [etnc19_web_2019](https://huggingface.co/Jaagup/etnc19_web_2019) and [etnc19_reference_corpus_6000000_web_2019_600000](https://huggingface.co/Jaagup/etnc19_reference_corpus_6000000_web_2019_600000).
+
+Add grammatical error correction models to `grammar-worker/models` and spell-checking models to `grammar-worker/models/spellmodels`.
 
 ## Model configuration
 
