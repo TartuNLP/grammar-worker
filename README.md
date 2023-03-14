@@ -144,7 +144,7 @@ python -m unittest test.py
 Alternatively, you may refer to the example usage:
 
 ```shell
-python -m unittest test.py
+python example.py
 ```
 
 ### Performance and Hardware Requirements
