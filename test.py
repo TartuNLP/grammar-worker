@@ -62,10 +62,9 @@ class Test(unittest.TestCase):
         from gec_worker import spelling
         from gec_worker.dataclasses import Response, Request
 
-#        spelling1 = spelling.Spelling("etnc19_web_2019.bin")
-        spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000.bin")
-#        spelling1 = spelling.Spelling("etnc19_reference_corpus_model_6000000_lines.bin")
-#        spelling1 = spelling.Spelling("etnc19_wikipedia2017.bin")
+#        spelling1 = spelling.Spelling("etnc19_web_2019/etnc19_web_2019.bin")
+        spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000/etnc19_reference_corpus_6000000_web_2019_600000.bin")
+#        spelling1 = spelling.Spelling("etnc19_reference_corpus_model_6000000_lines/etnc19_reference_corpus_model_6000000_lines.bin")
 
         request = Request(text="Juku joksis koolis. Aitüma.", language='et')
         response = spelling1.process_request(request)
@@ -84,7 +83,7 @@ class Test(unittest.TestCase):
         from gec_worker import multiple_corrections
         model_config = read_model_config('models/GEC-noisy-nmt-ut-config.yaml')
         gec = GEC(model_config)
-        spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000.bin")
+        spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000/etnc19_reference_corpus_6000000_web_2019_600000.bin")
         model_list=multiple_corrections.MultipleCorrections()
         model_list.add_corrector(spelling1)
         model_list.add_corrector(gec)
