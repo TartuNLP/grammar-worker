@@ -132,7 +132,7 @@ RabbitMQ and PyTorch parameters should be configured with environment variables 
 started with:
 
 ```shell
-python main.py [--model-config models/config.yaml] [--log-logging logging/logging.ini]
+python main.py [--gec-model-config models/config.yaml] [--spell-model models/spellmodels/model/model.bin] [--log-logging logging/logging.ini]
 ```
 
 Or you can run the test script which does not require RabbitMQ:
