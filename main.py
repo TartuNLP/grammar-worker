@@ -13,7 +13,7 @@ parser = ArgumentParser(
 )
 parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GEC-synthetic-pretrain-ut-ft-config.yaml',
                     help="The model config YAML file to load.")
-parser.add_argument('--spell-model', type=FileType('r'), default='models/etnc19_reference_corpus_6000000_web_2019_600000.bin',
+parser.add_argument('--spell-model', type=FileType('r'), default='etnc19_reference_corpus_6000000_web_2019_600000/etnc19_reference_corpus_6000000_web_2019_600000.bin',
                     help="The Jamspell model BIN file.")
 parser.add_argument('--log-config', type=FileType('r'), default='logging/logging.ini',
                     help="Path to log config file.")
