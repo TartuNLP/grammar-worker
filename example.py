@@ -12,7 +12,7 @@ def run_multiple_correction_model(source_text):
     gec = GEC(model_config)
 
         # Load spelling model
-    spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000.bin")
+    spelling1 = spelling.Spelling("etnc19_reference_corpus_6000000_web_2019_600000/etnc19_reference_corpus_6000000_web_2019_600000.bin")
 
         # Make model list and add models
     model_list=multiple_corrections.MultipleCorrections()
