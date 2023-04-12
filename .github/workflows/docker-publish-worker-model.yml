@@ -94,7 +94,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:latest
           cache-to: type=inline
-          target: worker-model
           build-args: |
             MODEL_IMAGE=${{ inputs.model_image }}
             GEC_CONFIG=${{ inputs.gec_config }}
