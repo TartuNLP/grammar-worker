@@ -12,7 +12,7 @@ class Request(BaseModel):
     A dataclass to store requests
     """
     text: str = Field(..., max_length=worker_config.max_input_length)
-    language: str
+    language: str = "et"
 
 
 @dataclass

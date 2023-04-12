@@ -13,7 +13,7 @@ from pika import credentials, BlockingConnection, ConnectionParameters
 
 from .config import mq_config
 from .dataclasses import Response, Request
-from .multiple_corrections import MultipleCorrections
+from .corrector import Corrector
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ X_EXPIRES = 60000
 
 
 class MQConsumer:
-    def __init__(self, corrector: MultipleCorrections, language = "et"):
+    def __init__(self, corrector: Corrector, language ="et"):
         """
         Initializes a RabbitMQ consumer class that listens for requests for a specific worker and responds to
         them.

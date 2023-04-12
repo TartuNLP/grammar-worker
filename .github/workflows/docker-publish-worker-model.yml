@@ -11,12 +11,22 @@ on:
         description: "The model image to use."
         required: true
         type: string
-        default: "ghcr.io/tartunlp/grammar-model:et"
+        default: "model-dl"
       model_flavor:
         description: "The model's flavor, used as image tag suffix."
         required: true
         type: string
         default: "et"
+      gec_config:
+        description: "The GEC model's config file to use to download model from Huggingface"
+        required: true
+        type: string
+        default: ""
+      speller_config:
+        description: "The speller model's config file to use to download model from Huggingface"
+        required: true
+        type: string
+        default: ""
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -87,3 +97,5 @@ jobs:
           target: worker-model
           build-args: |
             MODEL_IMAGE=${{ inputs.model_image }}
+            GEC_CONFIG=${{ inputs.gec_config }}
+            SPELLER_CONFIG=${{ inputs.speller_config }}

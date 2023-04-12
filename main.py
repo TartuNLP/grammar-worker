@@ -5,16 +5,17 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from gec_worker import MQConsumer, GEC, read_model_config, Spelling, MultipleCorrections
+from gec_worker import MQConsumer, GEC, read_gec_config, read_speller_config, Speller, MultiCorrector
 
 parser = ArgumentParser(
     description="A neural grammatical error correction worker that processes incoming requests via "
                 "RabbitMQ."
 )
-parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GEC-synthetic-pretrain-ut-ft-config.yaml',
-                    help="The model config YAML file to load.")
-parser.add_argument('--spell-model', type=FileType('r'), default='models/spellmodels/etnc19_reference_corpus_6000000_web_2019_600000/etnc19_reference_corpus_6000000_web_2019_600000.bin',
-                    help="The Jamspell model BIN file.")
+parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GEC-synthetic-pretrain-ut-ft.yaml',
+                    help="The GEC model config file.")
+parser.add_argument('--spell-model-config', type=FileType('r'),
+                    default='models/spell_etnc19_reference_corpus_6000000_web_2019_600000.yaml',
+                    help="The Jamspell model config file.")
 parser.add_argument('--log-config', type=FileType('r'), default='logging/logging.ini',
                     help="Path to log config file.")
 parser.add_argument('--port', type=int, default='8000',
@@ -37,13 +38,20 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup():
     global mq_thread
-    gec_model_config = read_model_config(args.gec_model_config.name)
-    gec = GEC(gec_model_config)
-    spelling = Spelling(args.spell_model.name)
-    corrector = MultipleCorrections()
-    corrector.add_corrector(spelling)
-    corrector.add_corrector(gec)
-    consumer = MQConsumer(corrector=corrector)
+
+    multi_corrector = MultiCorrector()
+
+    if args.spell_model_config:
+        speller_config = read_speller_config(args.spell_model_config.name)
+        speller = Speller(speller_config)
+        multi_corrector.add_corrector(speller)
+
+    if args.gec_model_config:
+        gec_config = read_gec_config(args.gec_model_config.name)
+        gec = GEC(gec_config)
+        multi_corrector.add_corrector(gec)
+
+    consumer = MQConsumer(corrector=multi_corrector)
 
     mq_thread = threading.Thread(target=consumer.start)
     mq_thread.connected = False

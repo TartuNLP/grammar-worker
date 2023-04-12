@@ -1,0 +1,9 @@
+huggingface: tartuNLP/GEC-noisy-nmt-ut
+checkpoint: models/tartuNLP/GEC-noisy-nmt-ut/checkpoint_best.pt
+dict_dir: models/tartuNLP/GEC-noisy-nmt-ut/dicts/
+sentencepiece_dir: models/tartuNLP/GEC-noisy-nmt-ut/sentencepiece/
+sentencepiece_prefix: sp_model
+truecase_model: no
+source_language: et0
+target_language: et
+task: multilingual_translation

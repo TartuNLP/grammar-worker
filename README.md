@@ -1,11 +1,18 @@
 # Grammatical Error Correction
 
-This repository contains code for running Estonian spell-checking and grammatical error correction (GEC) models to process incoming requests. These error-correction models can be called individually or combined in a sequence. The worker is compatible
-with our [GEC API](https://ghcr.io/tartunlp/grammar-api) and can be used to process requests from RabbitMQ. You can find the example for offline usage in both the Colab file named `GEC_and_spell_demo.ipynb` and the Python script named `example.py`.
+This repository contains code for running Estonian spell-checking and grammatical error correction (GEC) models to
+process incoming requests. These error-correction models can be called individually or combined in a sequence. The
+worker is compatible with our [GEC API](https://ghcr.io/tartunlp/grammar-api) and can be used to process requests from
+RabbitMQ. You can find the example for offline usage in both the Colab file named `GEC_and_spell_demo.ipynb` and the
+Python script named `example.py`.
 
-The GEC implementation uses Transformer-based machine translation models to normalize the input text, the models are trained using custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq). 
+The GEC implementation uses Transformer-based machine translation models to normalize the input text, the models are
+trained using custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq).
 
-Statistical spelling correction relies on the Jamspell algorithm that analyzes word contexts based on a trigram language model. The project is developed by the [NLP research group](https://tartunlp.ai/) at the [University of Tartu](https://ut.ee/) and the [language technology research group](https://evkk.tlu.ee/about/people) at the [Tallinn University](https://tlu.ee).
+Statistical spelling correction relies on the Jamspell algorithm that analyzes word contexts based on a trigram language
+model. The project is developed by the [NLP research group](https://tartunlp.ai/) at
+the [University of Tartu](https://ut.ee/) and the [language technology research group](https://evkk.tlu.ee/about/people)
+at the [Tallinn University](https://tlu.ee).
 
 ## Setup
 
@@ -14,11 +21,11 @@ The Estonian GEC worker can be used by running the prebuilt images.
 There are two separate images:
 
 - [`grammar-worker`](https://ghcr.io/tartunlp/grammar-worker) (documented below)
-- [`grammar-model`](https://ghcr.io/tartunlp/grammar-model)
-  (documented in `models/README.md`)
+- [`grammar-model`](https://ghcr.io/tartunlp/grammar-model) [DEPRECATED]
 
 The worker can be set up using the [`grammar-worker`](https://ghcr.io/tartunlp/grammar-worker)
-image. This image contains only the environment setup and code to run the models, and is designed to be used in a CPU
+image. The base image contains only the environment setup and code to run the models, and is designed to be used in a
+CPU
 environment. The container should be configured using the following parameters:
 
 - Environment variables:
@@ -40,9 +47,11 @@ environment. The container should be configured using the following parameters:
           Longer requests will return validation errors.
 
 - Optional runtime flags (the `COMMAND` option):
-    - `--model-config` - path to the model config file (`models/config.yaml` by default). The default file is included
-      in images that already include models. Compatible sample files are included in the `models/` directory and the
-      format is described in [`models/README.md`](https://github.com/TartuNLP/grammar-worker/tree/main/models)).
+    - `--gec-model-config` - path to the GEC model config file. Compatible sample files are included in the `models/`
+      directory
+      and the format is described in `models/README.md`.
+    - `--spell-model-config` - path to the spell-checking model config file. Compatible sample files are included in the
+      `models/` directory and the format is described in `models/README.md`.
     - `--log-config` - path to logging config files (`logging/logging.ini` by default), `logging/debug.ini` can be used
       for debug-level logging
     - `--port` - port of the healthcheck probes (`8000` by default):
@@ -51,6 +60,10 @@ environment. The container should be configured using the following parameters:
     - `/health/startup`
     - `/health/readiness`
     - `/health/liveness`
+
+The main image contains no models. There are additional images with suffix `et` that contain the default Estonian
+models. Alternatively models can be mounted to the container at `/app/models` using a volume or they will be downloaded
+automatically from HuggingFace upon startup.
 
 ### Sample configuration
 
@@ -87,26 +100,25 @@ services:
 
 ### Building new images
 
-When building the image, the model can be built with different targets. BuildKit should be enabled to skip any unused
-stages of the build.
+The image can be built with and without including models. The following build-time arguments can be used to configure
+the default build:
 
-Final targets:
+- `MODEL_IMAGE` - the image name where the model is copied from. By default, uses the `model-dl` stage (described
+  below).
+- `GEC_CONFIG` - the path to the GEC model config file. If specified, will download the model files from HuggingFace
+  and include them in the image. Only used if `MODEL_IMAGE` equals `model-dl`.
+- `SPELL_CONFIG` - the path to the spell-checking model config file. If specified, will download the model files from
+  HuggingFace and include them in the image. Only used if `MODEL_IMAGE` equals `model-dl`.
+- `MODEL_DIR` - the directory where the model files are located. By default, uses the `models/` directory. Only used if
+  `MODEL_IMAGE` equals `model-cp`.
 
-- `worker-base` - the worker code without any models.
-- `worker-model` - a worker with an included model. Requires the following build-time argument:
-    - `MODEL_IMAGE` - the image name where the model is copied from. For example any of
-      the [`grammar-model`](https://ghcr.io/TartuNLP/grammar-model) images. By default, uses the `model-cp` stage (
-      described below).
-
-Intermediate targets:
+Intermediate build targets:
 
 - `env` - an intermediate build stage with all packages installed, but no code.
-- `model-cp` - images that only contain model files and configuration. The separate stage is used to cache this step and
-  speed up builds because model files can be very large. Published
-  at [`grammar-model`](https://ghcr.io/TartuNLP/grammar-model). Alternatively, these can be used
-  as init containers to copy models over during startup. Requires the following build-time argument:
-    - `MODEL_DIR` - the directory where the model files are located. By default, uses the `models/` directory.
-- `model` - an alias for the model image, the value of `MODEL_IMAGE` or `model-cp` by default.
+- `model-cp` - an optional stage to copy models from a local directory.
+- `model` - an alias for the model image, the value of `MODEL_IMAGE` or `model-dl` by default.
+
+To skip unnecessary stages, BuildKit should be enabled.
 
 ## Manual / development setup
 
@@ -118,9 +130,8 @@ conda actvate grammar-worker
 pip install -r requirements.txt
 ```
 
-You can download model files from the [releases page](https://github.com/TartuNLP/grammar-worker/releases) and extract them
-in the `models` directory.
-Additionally info about model file structure can be found in `models/README.md`.
+Model files will be downloaded automatically from HuggingFace upon startup. Alternatively, you can download model files
+manually. For more information about models, please refer to `models/README.md`.
 
 To initialize the sentence splitting functionality, the following command should be run before starting the application:
 
@@ -132,7 +143,7 @@ RabbitMQ and PyTorch parameters should be configured with environment variables 
 started with:
 
 ```shell
-python main.py [--gec-model-config models/config.yaml] [--spell-model models/spellmodels/model/model.bin] [--log-logging logging/logging.ini]
+python main.py [--gec-model-config models/gec_model_config.yaml] [--spell-model-config models/spell_model_config.yaml] [--log-config logging/logging.ini]
 ```
 
 Or you can run the test script which does not require RabbitMQ:

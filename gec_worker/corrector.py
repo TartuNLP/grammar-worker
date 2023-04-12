@@ -1,35 +1,28 @@
-import jamspell
+from abc import ABC, abstractmethod
 
-import itertools
-import logging
-import os
 from typing import List
-import warnings
-
-from .dataclasses import Response, Request
 from .utils import sentence_tokenize, generate_spans
+from .dataclasses import Response, Request
+import logging
+import warnings
+import itertools
 
 logger = logging.getLogger(__name__)
 
 warnings.filterwarnings('ignore', '.*__floordiv__*', )
 
-
-
-class Spelling:
-    model = None
-
-    def __init__(self, model_name: str):
-        self.model_name = model_name
-        self.corrector=jamspell.TSpellCorrector()
-        self.corrector.LoadLangModel("models/spellmodels/"+self.model_name)
- 
+class Corrector(ABC):
+    max_positions = None
+    @abstractmethod
     def correct(self, sentences: List[str]) -> List[str]:
-        return [self.corrector.FixFragment(sentence) for sentence in sentences]
+        pass
 
     def process_request(self, request: Request) -> Response:
         sentences, delimiters = sentence_tokenize(
-            request.text
+            request.text,
+            self.max_positions
         )
+
         predictions = [correction.strip() if sentences[idx] != '' else '' for idx, correction in enumerate(
             self.correct(sentences))]
 

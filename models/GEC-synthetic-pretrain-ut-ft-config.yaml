@@ -1,8 +1,0 @@
-checkpoint: models/GEC-synthetic-pretrain-ut-ft/checkpoint_best.pt
-dict_dir: models/GEC-synthetic-pretrain-ut-ft/dicts/
-sentencepiece_dir: models/GEC-synthetic-pretrain-ut-ft/sentencepiece/
-sentencepiece_prefix: sp_model
-truecase_model: models/GEC-synthetic-pretrain-ut-ft/tc-model.tc
-source_language: et0
-target_language: et
-task: translation

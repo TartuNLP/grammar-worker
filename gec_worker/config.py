@@ -1,3 +1,4 @@
+from typing import Optional
 import yaml
 from yaml.loader import SafeLoader
 
@@ -31,20 +32,43 @@ class WorkerConfig(BaseSettings):
 
 
 class ModelConfig(BaseModel):
-    language: str = "et" # actual ISO input language code, deprecated
-    checkpoint: str = "models/checkpoint_best.pt"
-    dict_dir: str = "models/dicts/"
-    sentencepiece_dir: str = "models/sentencepiece/"
+    huggingface: Optional[str] = None
+
+    def download(self):
+        if self.huggingface is not None:
+            from huggingface_hub import Repository
+            Repository(clone_from=self.huggingface, local_dir=f"models/{self.huggingface}")
+        else:
+            raise ValueError("Model cannot be downloaded, no HuggingFace repository specified.")
+
+
+class GECModelConfig(ModelConfig):
+    huggingface: Optional[str] = None
+    checkpoint: str = "checkpoint_best.pt"
+    dict_dir: str = "dicts/"
+    sentencepiece_dir: str = "sentencepiece/"
     sentencepiece_prefix: str = "sp-model"
-    truecase_model: str = "models/tc-model.tc"
+    truecase_model: str = "tc-model.tc"
     source_language: str = "et0"  # input language code in the model
     target_language: str = "et1"  # target language code in the model
-    task: str = "multilingual_translation" # task the model is trained on multilingual_translation/translation
+    task: str = "multilingual_translation"  # task the model is trained on multilingual_translation
 
 
-def read_model_config(file_path: str) -> ModelConfig:
+class SpellModelConfig(ModelConfig):
+    huggingface: str
+    model_bin: str
+
+
+def read_gec_config(file_path: str) -> GECModelConfig:
     with open(file_path, 'r', encoding='utf-8') as f:
-        model_config = ModelConfig(**yaml.load(f, Loader=SafeLoader))
+        model_config = GECModelConfig(**yaml.load(f, Loader=SafeLoader))
+
+    return model_config
+
+
+def read_speller_config(file_path: str) -> SpellModelConfig:
+    with open(file_path, 'r', encoding='utf-8') as f:
+        model_config = SpellModelConfig(**yaml.load(f, Loader=SafeLoader))
 
     return model_config
 
