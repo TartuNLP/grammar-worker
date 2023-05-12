@@ -2,7 +2,8 @@ import logging
 import copy
 from typing import Dict, List, Iterator, Any, Optional
 from .utils import processLine, loadModel
-from mosestokenizer import MosesDetokenizer, MosesTokenizer
+from mosestokenizer import MosesDetokenizer
+import stanza
 from fairseq.data import Dictionary, LanguagePairDataset, FairseqDataset
 from fairseq import utils, search, hub_utils
 from fairseq.models.transformer import TransformerModel
@@ -26,7 +27,7 @@ class ModularHubInterface(Module):
             task: TranslationTask,
             cfg: DictConfig,
             sp_models: Dict[str, SentencePieceProcessor],
-            tokenizer: MosesTokenizer,
+            tokenizer: stanza.Pipeline,
             detokenizer: MosesDetokenizer,
             truecaser: Dict
     ):
@@ -78,7 +79,8 @@ class ModularHubInterface(Module):
             ) for lang in all_langs
         }
 
-        tokenizer = MosesTokenizer('et') if task == "translation" else None
+        tokenizer = stanza.Pipeline(lang='et', processors='tokenize', tokenize_no_ssplit=True) if task == "translation" else None
+
         detokenizer = MosesDetokenizer('et') if task == "translation" else None
         truecaser = loadModel(truecase_model) if task == "translation" else None
 
@@ -107,7 +109,12 @@ class ModularHubInterface(Module):
         return processLine(self.truecaser, sentence)
 
     def tokenize(self, sentence: str) -> str:
-        return " ".join(self.tokenizer(sentence))
+        doc = self.tokenizer(sentence)
+        tokens = []
+        for sentence in doc.sentences:
+            tokens += [ token.text for token in sentence.tokens ]
+        print("\n\n\nTOK\n\n\n", " ".join(tokens))
+        return " ".join(tokens)
 
     def string(self, tokens: Tensor, language: str) -> str:
         return self.dicts[language].string(tokens)
@@ -136,9 +143,11 @@ class ModularHubInterface(Module):
         bpe_token_sent = self.string(tokens, language)
         decoded_sent = self.remove_bpe(bpe_token_sent)
         decoded_sent = self.remove_truecase(decoded_sent)
+        print("\n\noutput", decoded_sent)
         if self.detokenizer is not None:
             decoded_sent = self.remove_tokenization(decoded_sent)
         logger.debug(f"Postprocessed: {bpe_token_sent} into {decoded_sent}.")
+        
         return decoded_sent
 
     def translate(

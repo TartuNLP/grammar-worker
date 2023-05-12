@@ -7,7 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 class MultiCorrector(Corrector):
-    correctors = []
+    def __init__(self) -> None:
+        super().__init__()
+        self.correctors = []
 
     def add_corrector(self, corrector):
         self.correctors.append(corrector)

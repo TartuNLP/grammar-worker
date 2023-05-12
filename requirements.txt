@@ -14,3 +14,4 @@ swig~=3.0.2  # jamspell requires swig 3
 jamspell~=0.0.12
 mosestokenizer~=1.2.1
 huggingface-hub~=0.13.4
+stanza~=1.4.2
