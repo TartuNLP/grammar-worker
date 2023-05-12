@@ -113,7 +113,6 @@ class ModularHubInterface(Module):
         tokens = []
         for sentence in doc.sentences:
             tokens += [ token.text for token in sentence.tokens ]
-        print("\n\n\nTOK\n\n\n", " ".join(tokens))
         return " ".join(tokens)
 
     def string(self, tokens: Tensor, language: str) -> str:
@@ -143,11 +142,9 @@ class ModularHubInterface(Module):
         bpe_token_sent = self.string(tokens, language)
         decoded_sent = self.remove_bpe(bpe_token_sent)
         decoded_sent = self.remove_truecase(decoded_sent)
-        print("\n\noutput", decoded_sent)
         if self.detokenizer is not None:
             decoded_sent = self.remove_tokenization(decoded_sent)
         logger.debug(f"Postprocessed: {bpe_token_sent} into {decoded_sent}.")
-        
         return decoded_sent
 
     def translate(
