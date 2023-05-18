@@ -122,7 +122,7 @@ To skip unnecessary stages, BuildKit should be enabled.
 
 ## Manual / development setup
 
-For a manual setup, use a python environment with Python 3.10 and install requirements from `requirements.txt`:
+For a manual setup, use a python environment with Python 3.10, install Swig 3.0 for JamSpell  and requirements from `requirements.txt`:
 
 ```shell
 conda create -n grammar-worker python=3.10
