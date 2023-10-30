@@ -1,6 +1,6 @@
 huggingface: tartuNLP/en-et-de-cs-nelb 
 checkpoint: models/tartuNLP/en-et-de-cs-nelb/checkpoint_1.3b_half.pt
-dict_dir: models/tartuNLP/en-et-de-cs-75-nelb/dicts/
+dict_dir: models/tartuNLP/en-et-de-cs-nelb/dicts/
 sentencepiece_dir: models/tartuNLP/en-et-de-cs-nelb/sentencepiece/
 sentencepiece_prefix: flores200_sacrebleu_tokenizer_spm
 truecase_model: no
