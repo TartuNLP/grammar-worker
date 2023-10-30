@@ -7,3 +7,4 @@ truecase_model: models/tartuNLP/GEC-synthetic-pretrain-ut-ft/tc-model.tc
 source_language: et0
 target_language: et
 task: translation
+type: synthetic

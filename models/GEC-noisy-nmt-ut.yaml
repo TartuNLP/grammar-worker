@@ -7,3 +7,4 @@ truecase_model: no
 source_language: et0
 target_language: et
 task: multilingual_translation
+type: modular
