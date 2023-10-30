@@ -16,7 +16,7 @@ from torch.nn import ModuleList, Module
 
 logger = logging.getLogger(__name__)
 
-class NLLBHubInterface(Module):
+class NELBHubInterface(Module):
     def __init__(
             self,
             models: List[TransformerModel],
@@ -54,12 +54,12 @@ class NLLBHubInterface(Module):
         x = hub_utils.from_pretrained(
             "./",
             checkpoint_file=model_path,
-            archive_map={},
             fixed_dictionaty=f'{dictionary_path}/dict.est_Latn.txt',
+            archive_map={},
+            lang_pairs=f"{source_language}-{target_language}",
             data_name_or_path=dictionary_path,
             task=task,
             fp16=True,
-            lang_pairs=f"{source_language}-{target_language}",
             source_lang=source_language,
             target_lang=target_language
         )

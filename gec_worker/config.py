@@ -52,6 +52,7 @@ class GECModelConfig(ModelConfig):
     source_language: str = "et0"  # input language code in the model
     target_language: str = "et1"  # target language code in the model
     task: str = "multilingual_translation"  # task the model is trained on multilingual_translation
+    type: str = "nelb" # No Error Left Behind type model
 
 
 class SpellModelConfig(ModelConfig):
