@@ -22,13 +22,14 @@ ENV MKL_NUM_THREADS=""
 
 WORKDIR /app
 
-RUN adduser --system --group app && chown -R app:app /app
+RUN adduser --system --group app --home /home/app && chown -R app:app /app
 USER app
 
 ENV PATH="/home/app/.local/bin:${PATH}"
 
 COPY --chown=app:app requirements.txt .
-RUN pip install --user -r requirements.txt && \
+RUN pip install --user swig~=3.0.12 && \
+    pip install --user -r requirements.txt && \
     rm requirements.txt && \
     python -c "import nltk; nltk.download(\"punkt\")"
 

@@ -11,10 +11,9 @@ parser = ArgumentParser(
     description="A neural grammatical error correction worker that processes incoming requests via "
                 "RabbitMQ."
 )
-parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GEC-synthetic-pretrain-ut-ft.yaml',
+parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GEC-nelb-1.3b.yaml',
                     help="The GEC model config file.")
-parser.add_argument('--spell-model-config', type=FileType('r'),
-                    default='models/spell_etnc19_reference_corpus_6000000_web_2019_600000.yaml',
+parser.add_argument('--spell-model-config', type=FileType('r'), default=None,
                     help="The Jamspell model config file.")
 parser.add_argument('--log-config', type=FileType('r'), default='logging/logging.ini',
                     help="Path to log config file.")
