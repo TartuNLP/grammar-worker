@@ -19,12 +19,12 @@ on:
         default: "et"
       gec_config:
         description: "The GEC model's config file to use to download model from Huggingface"
-        required: true
+        required: false
         type: string
         default: ""
       speller_config:
         description: "The speller model's config file to use to download model from Huggingface"
-        required: true
+        required: false
         type: string
         default: ""
 
