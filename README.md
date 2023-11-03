@@ -158,7 +158,7 @@ python example.py
 
 ### Performance and Hardware Requirements
 
-The exact RAM usage depends on the model and should always be tested, but a conservative estimate is to have **8 GB of
+The exact RAM usage depends on the model and should always be tested, but a conservative estimate is to have **12 GB of
 memory** available.
 
 The performance depends on the available CPU resources, however, this should be fine-tuned for the deployment
