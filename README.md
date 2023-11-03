@@ -86,13 +86,11 @@ services:
       - rabbitmq
     restart: always
   gec_worker:
-    image: ghcr.io/tartunlp/grammar-worker:latest
+    image: ghcr.io/tartunlp/grammar-worker:et
     environment:
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
       - MKL_NUM_THREADS=16
-    volumes:
-      - ./grammar-worker/models:/app/models
     depends_on:
       - rabbitmq
     restart: always

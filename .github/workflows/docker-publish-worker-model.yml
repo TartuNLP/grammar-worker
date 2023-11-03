@@ -75,6 +75,7 @@ jobs:
             latest=false
           tags: |
             type=raw,value=${{ inputs.version }}-${{ inputs.model_flavor }}
+            type=raw,value=${{ inputs.model_flavor }}
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}
 
       - name: Set up Docker Buildx
