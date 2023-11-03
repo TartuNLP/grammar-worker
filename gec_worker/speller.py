@@ -16,7 +16,7 @@ class Speller(Corrector):
         if not os.path.isfile(model_config.model_bin):
             logger.info(f"Speller model {model_config.model_bin} not found. Trying to download...")
             model_config.download()
-        logger.info(f"Loading model {model_config.model_bin}, this may take a while...")
+        logger.info(f"Loading model {model_config.model_bin}, this may take several minutes...")
         self.corrector.LoadLangModel(model_config.model_bin)
         logger.info(f"Speller model {model_config.model_bin} loaded")
 

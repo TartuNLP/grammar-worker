@@ -57,7 +57,7 @@ environment. The container should be configured using the following parameters:
     - `--port` - port of the healthcheck probes (`8000` by default):
 
 - Endpoints for healthcheck probes:
-    - `/health/startup`
+    - `/health/startup` - NB! When Speller is used, the startup probe may take up to 10 minutes to complete.
     - `/health/readiness`
     - `/health/liveness`
 

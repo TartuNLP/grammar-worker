@@ -9,7 +9,7 @@ def run_multiple_correction_model(source_text):
     from gec_worker import MultiCorrector
 
     # Load grammatical error correction model, use models/GEC-noisy-nmt-ut.yaml to use the other model
-    gec_config = read_gec_config('models/GEC-nelb-600m.yaml')
+    gec_config = read_gec_config('models/GEC-nelb-1.3b.yaml')
     gec = GEC(gec_config)
 
     # Load spelling model

@@ -24,6 +24,21 @@ def apply_corrections(original: str, corrections: List[Correction]):
 
 
 class Test(unittest.TestCase):
+    def test_GEC_nelb_ut_model(self):
+        """
+        Test that the model can be loaded and used.
+        :return:
+        """
+        from gec_worker import GEC, read_gec_config
+        from gec_worker.dataclasses import Response, Request
+
+        gec_config = read_gec_config('models/GEC-nelb-1.3b.yaml')
+        gec = GEC(gec_config)
+        request = Request(text="Juku joksis koolis. Aitüma.", language='et')
+        response = gec.process_request(request)
+        pprint(asdict(response))
+        self.assertIsInstance(response, Response)
+
     def test_GEC_synthetic_pretrain_ut_model(self):
         """
         Test that the model can be loaded and used.
