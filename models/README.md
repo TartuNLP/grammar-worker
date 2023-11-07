@@ -28,7 +28,7 @@ The GEC model should have a matching configuration file with the following keys:
 - `source_language` - input langauge code (as understood by the model)
 - `target_language` - output langauge code (as understood by the model)
 - `task` - task the model has been trained on (translation, multilingual_translation or translation_multi_simple_epoch)
-- `type` - architecture used (nelb, synthetic, nmt)
+- `type` - architecture used (nelb, synthetic, modular)
 
 all paths are relative to the root directory of the repository.
 
@@ -75,13 +75,13 @@ The spell-checking model should have a matching configuration file with the foll
 
 ## Available models
 
-We offer two GEC and three spell-checking models compatible with this repository.
+We offer three GEC and three spell-checking models compatible with this repository.
 
 ### Grammatical Error Correction
 
 The three GEC models are:
 
-* `en-et-de-cs-nelb` – the model is initialized from the [No Language Left Behind](https://github.com/facebookresearch/fairseq/tree/nllb)
+* `en-et-de-cs-nelb` – the model is initialized from the [No Language Left Behind](https://github.com/facebookresearch/fairseq/tree/nllb)(NLLB)
   translation model. It is then further trained with a mix of translation examples and synthetic monolingual error correction examples
    in four languages. Additionally, it is fine-tuned multilingually with error correction examples, including 9,000 in Estonian. 
 * `GEC-synthetic-pretrain-ut-ft` – the model is first trained similarly to unidirectional machine translation models first trained
@@ -152,10 +152,10 @@ output is considered in the evaluation. The results for the GEC models are as fo
 | GEC-noisy-nmt-ut  | 54.96 | 39.77 |  51.06 |
 
 
-The best precision, recall, and F<sub>0.5</sub> score has been achieved by the NELB model, which is based on the NLLB translation model, 
+The best precision, recall, and F<sub>0.5</sub> score has been achieved by the NELB model, based on the NLLB translation model, 
 which achieves a precision of over 70% and recall of over 50%. The Reference Corpus speller model slightly increases the scores for
-multilingual NMT based models but its performance is still worse than the models incorporating monolingual pre-training.
+multilingual NMT based models but its performance is still worse than those incorporating monolingual pre-training.
 
 Currently, only full corrections have been taken into account, disregarding partial corrections of words containing
 multiple errors that have to be evaluated qualitatively. Further testing is in progress to validate the models’ ability
-to detect and correct different error types as well as errors made by native speakers of Estonian.
+to detect and correct different error types and errors made by native speakers of Estonian.
