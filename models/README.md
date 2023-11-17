@@ -5,7 +5,6 @@ main [grammar-worker](https://github.com/tartunlp/grammar-worker) container by m
 the model files are not found, they will be downloaded automatically at startup.
 
 The model files are hosted on HuggingFace.
-
 - Grammatical error correction models
   are [en-et-de-cs-nelb](https://huggingface.co/tartuNLP/en-et-de-cs-nelb/tree/main), [GEC-synthetic-pretrain-ut-ft](https://huggingface.co/tartuNLP/GEC-synthetic-pretrain-ut-ft)
   and [GEC-noisy-nmt-ut](https://huggingface.co/tartuNLP/GEC-noisy-nmt-ut).
@@ -146,10 +145,10 @@ output is considered in the evaluation. The results for the GEC models are as fo
 
 | System  | Precision  | Recall  | F<sub>0.5</sub>  |
 |:---------:|:---:|:----------:|:----------:|
-| en-et-de-cs-nelb |  70.41 | 50.63 | 65.31   |
-| GEC-synthetic-pretrain-ut-ft  |  64.63 | 38.35 | 56.84 |
-| spell + GEC-noisy-nmt-ut  | 55.87 | 41.16 |  52.15 |
-| GEC-noisy-nmt-ut  | 54.96 | 39.77 |  51.06 |
+| en-et-de-cs-nelb | 71.92	| 55.44	| 67.88  |
+| GEC-synthetic-pretrain-ut-ft  | 66.17 | 42.04 | 59.36 |
+| spell + GEC-noisy-nmt-ut  | 56.94 | 45.06 | 54.09 |
+| GEC-noisy-nmt-ut  | 56.16 | 43.61 |	53.1 |
 
 
 The best precision, recall, and F<sub>0.5</sub> score has been achieved by the NELB model, based on the NLLB translation model, 
