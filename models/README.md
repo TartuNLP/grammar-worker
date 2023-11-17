@@ -7,7 +7,7 @@ the model files are not found, they will be downloaded automatically at startup.
 The model files are hosted on HuggingFace.
 
 - Grammatical error correction models
-  are [GEC-synthetic-pretrain-ut-ft](https://huggingface.co/tartuNLP/GEC-synthetic-pretrain-ut-ft)
+  are [en-et-de-cs-nelb](https://huggingface.co/tartuNLP/en-et-de-cs-nelb/tree/main), [GEC-synthetic-pretrain-ut-ft](https://huggingface.co/tartuNLP/GEC-synthetic-pretrain-ut-ft)
   and [GEC-noisy-nmt-ut](https://huggingface.co/tartuNLP/GEC-noisy-nmt-ut).
 - Spell-checking models
   are [etnc19_reference_corpus_model_6000000_lines](https://huggingface.co/Jaagup/etnc19_reference_corpus_model_6000000_lines), [etnc19_web_2019](https://huggingface.co/Jaagup/etnc19_web_2019)
@@ -27,7 +27,8 @@ The GEC model should have a matching configuration file with the following keys:
 - `truecase_model` - the path for truecasing model or `no` if no truecasing is used
 - `source_language` - input langauge code (as understood by the model)
 - `target_language` - output langauge code (as understood by the model)
-- `task` - task the model has been trained on (translation or multilingual_translation)
+- `task` - task the model has been trained on (translation, multilingual_translation or translation_multi_simple_epoch)
+- `type` - architecture used (nelb, synthetic, modular)
 
 all paths are relative to the root directory of the repository.
 
@@ -45,6 +46,7 @@ truecase_model: models/model_name/tc-model.tc
 source_language: et0
 target_language: et
 task: translation
+type: synthetic
 ```
 
 The configuration above matches the following folder structure:
@@ -73,21 +75,25 @@ The spell-checking model should have a matching configuration file with the foll
 
 ## Available models
 
-We offer two GEC and three spell-checking models compatible with this repository.
+We offer three GEC and three spell-checking models compatible with this repository.
 
 ### Grammatical Error Correction
 
-The two GEC models are:
+The three GEC models are:
 
-* `GEC-synthetic-pretrain-ut-ft` – model is first trained similarly to unidirectional machine translation models first
+* `en-et-de-cs-nelb` – the model is initialized from the [No Language Left Behind](https://github.com/facebookresearch/fairseq/tree/nllb)(NLLB)
+  translation model. It is then further trained with a mix of translation examples and synthetic monolingual error correction examples
+   in four languages. Additionally, it is fine-tuned multilingually with error correction examples, including 9,000 in Estonian. 
+* `GEC-synthetic-pretrain-ut-ft` – the model is first trained similarly to unidirectional machine translation models first trained
   using a larger synthetic corpus (created from adding simple errors to the monolingual text) and then fine-tuned with
   around 7,000 error correction examples.
-* `GEC-noisy-nmt-ut` – model is built on top of a multilingual machine translation model using monolingual zero-shot
+* `GEC-noisy-nmt-ut` – the model is built on top of a multilingual machine translation model using monolingual zero-shot
   translation for correcting errors, the GEC performance is improved using translation data with noisy input and
   continuing training with around 7,000 error correction examples.
 
-The first model exhibits slightly higher precision and lower recall, whereas the second model is the opposite - better
-recall but worse precision.
+We strongly recommend using the first model since it achieves significantly higher precision and recall than the other models. 
+The second model exhibits slightly higher precision and lower recall compared to the third, whereas the third model is the opposite - 
+better recall but worse precision.
 
 ### Spell-checking
 
@@ -136,14 +142,20 @@ span, and correction, the following errors are distinguished:
 * unnecessary words and punctuation
 
 Each sentence can have up to three annotation versions. The version that yields the best match with the correction
-output is considered in evaluation.
-The best F0.5 score have been achieved by the GEC model that uses synthetic pretraining (56.8) and the combination of
-the GEC model based on multilingual NMT and the Reference Corpus spell-checking model, using the spelling correction
-output as input for GEC (52.2). The GEC model that uses synthetic pretraining model has a higher precision (64.6%) and a
-lower recall (38.4%), which are not significantly affected by pre-processing the input text with a speller model. On the
-other hand, the precision of GEC model based on multilingual NMT (55.0%) and recall (39.8%) are improved by additional
-spell-checking, especially the Reference Corpus model that increases the precision to 55.9% and recall to 41.2%.
+output is considered in the evaluation. The results for the GEC models are as follows. 
+
+| System  | Precision  | Recall  | F<sub>0.5</sub>  |
+|:---------:|:---:|:----------:|:----------:|
+| en-et-de-cs-nelb |  70.41 | 50.63 | 65.31   |
+| GEC-synthetic-pretrain-ut-ft  |  64.63 | 38.35 | 56.84 |
+| spell + GEC-noisy-nmt-ut  | 55.87 | 41.16 |  52.15 |
+| GEC-noisy-nmt-ut  | 54.96 | 39.77 |  51.06 |
+
+
+The best precision, recall, and F<sub>0.5</sub> score has been achieved by the NELB model, based on the NLLB translation model, 
+which achieves a precision of over 70% and recall of over 50%. The Reference Corpus speller model slightly increases the scores for
+multilingual NMT based models but its performance is still worse than those incorporating monolingual pre-training.
 
 Currently, only full corrections have been taken into account, disregarding partial corrections of words containing
 multiple errors that have to be evaluated qualitatively. Further testing is in progress to validate the models’ ability
-to detect and correct different error types as well as errors made by native speakers of Estonian.
+to detect and correct different error types and errors made by native speakers of Estonian.
