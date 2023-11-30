@@ -79,7 +79,7 @@ class CorrectionListModelConfig(ModelConfig):
 
 def read_correction_list_config(file_path: str) -> CorrectionListModelConfig:
     with open(file_path, 'r', encoding='utf-8') as f:
-        model_config = ErrorsCorrectionModelConfig(**yaml.load(f, Loader=SafeLoader))
+        model_config = CorrectionListModelConfig(**yaml.load(f, Loader=SafeLoader))
     return model_config
 
 
