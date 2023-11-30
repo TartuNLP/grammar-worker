@@ -4,7 +4,7 @@ from typing import List
 import stanza
 
 from .corrector import Corrector
-from .config import ErrorsCorrectionModelConfig
+from .config import CorrectionListModelConfig
 
 logger = logging.getLogger(__name__)
 
