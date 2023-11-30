@@ -7,11 +7,10 @@ RabbitMQ. You can find the example for offline usage in both the Colab file name
 Python script named `example.py`.
 
 The GEC implementation uses Transformer-based machine translation models to normalize the input text, the models are
-trained using custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq).
+trained using custom [modular NMT implementation of FairSeq](https://github.com/TartuNLP/fairseq). Statistical spelling correction relies on the Jamspell algorithm that analyzes word contexts based on a trigram language model. 
 
-Statistical spelling correction relies on the Jamspell algorithm that analyzes word contexts based on a trigram language
-model. The project is developed by the [NLP research group](https://tartunlp.ai/) at
-the [University of Tartu](https://ut.ee/) and the [language technology research group](https://evkk.tlu.ee/about/people)
+The project is developed by the [NLP research group](https://tartunlp.ai/) at
+the [University of Tartu](https://ut.ee/) and the [language technology research group](https://elle.tlu.ee/about/people)
 at the [Tallinn University](https://tlu.ee).
 
 ## Setup
