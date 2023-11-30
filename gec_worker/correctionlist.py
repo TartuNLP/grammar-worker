@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class CorrectionList(Corrector):
-    def __init__(self, model_config: ErrorsCorrectionModelConfig):
+    def __init__(self, model_config: CorrectionListModelConfig):
         #self.corrector = jamspell.TSpellCorrector()
         self.tokenizer = stanza.Pipeline(lang='et', processors='tokenize', tokenize_no_ssplit=True)
         self.corrections={}
