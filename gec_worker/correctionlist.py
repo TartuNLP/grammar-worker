@@ -23,7 +23,7 @@ class CorrectionList(Corrector):
         f.readline()
         for r in f:
           m=r.split(";")
-          self.corrections[m[0]]=m[2]
+          self.corrections[m[0]]=m[1]
         f.close()
         logger.info(f"Correction model {model_config.model_bin} loaded")
 
