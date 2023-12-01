@@ -3,7 +3,7 @@
 The tool helps to find unlikely word sequences in Estonian texts based on the words' part-of-speech (POS). It converts each sentence to a POS string and detects potential errors by looking at the usage context of trigrams, i.e., three-word sequences. The probability of a preceding or subsequent context (either a certain POS, the beginning or end of a sentence) is estimated using a statistical model which is based on the Estonian Reference Corpus (the version available as a subcorpus of the [Estonian National Corpus](https://metashare.ut.ee/repository/browse/estonian-national-corpus-2021-vert/f176ccc0d05511eca6e4fa163e9d454794df2849e11048bb9fa104f1fec2d03f/).
 
 ## Usage
-Usage examples can be found in the Colab file `posgram_finder_demo.ipynb` and the Python script `demo.py`.
+Usage examples can be found in the Colab file `posgram_finder_demo.ipynb` and the Python script `example.py`.
 
 The [Stanza NLP package](https://stanfordnlp.github.io/stanza/) is applied for POS tagging. Language-specific ('XPOS') tags are used to group words into POS n-grams, or POS-grams. Custom tags are used to denote sentence onset and ending. The tagset is explained in the following table.
 | Tag | Meaning |
