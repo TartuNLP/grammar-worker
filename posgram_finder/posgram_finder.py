@@ -16,7 +16,7 @@ class PosgramFinder:
            kolmikud=[]
            jada="".join([sona.xpos for sona in lause.words])+"$"
            koht=0
-           print(jada)
+           print("^"+jada)
            while koht<len(jada)-2:
             if jada[koht]!='Z':
              abi=koht
