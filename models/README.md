@@ -129,7 +129,7 @@ Spell-checking results benefit significantly from word replacements based on a l
 
 ### Correction list
 
-Now only available model is errors_corrections_min3/correction_list.csv 
+Now only available model is `errors_corrections_min3/correction_list.csv`. 
 
 Model contains at least three times occured words with error from training material which have one possible correction. 
 
