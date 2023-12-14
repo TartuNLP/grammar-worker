@@ -17,6 +17,7 @@ def run_multiple_correction_model(source_text):
     speller_config = read_speller_config("models/spell_etnc19_reference_corpus_model_6000000_lines.yaml")
     speller = Speller(speller_config)
 
+    # Load correction list
     correction_list_config = read_correction_list_config('models/correction_list_min3.yaml')
     correction_list = CorrectionList(correction_list_config)
 
