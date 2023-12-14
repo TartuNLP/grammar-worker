@@ -74,12 +74,12 @@ The spell-checking model should have a matching configuration file with the foll
   directory of the repository.
 
 
-## Correction list Model configuration
+## Correction list configuration
 
-The correction list model should have a matching configuration file with the following keys:
+The correction list should have a matching configuration file with the following keys:
 
-- `huggingface` - name of the model on HuggingFace
-- `model_bin` - path of the model file (usually named {repository_name}.csv). The path is relative to the root directory of the repository.
+- `huggingface` - name of the list on HuggingFace
+- `model_bin` - path of the list file (usually named `{repository_name}.csv`). The path is relative to the root directory of the repository.
 
 ## Available models
 
@@ -89,7 +89,7 @@ We offer three GEC and three spell-checking models compatible with this reposito
 
 The three GEC models are:
 
-* `en-et-de-cs-nelb` – the model is initialized from the [No Language Left Behind](https://github.com/facebookresearch/fairseq/tree/nllb)(NLLB)
+* `en-et-de-cs-nelb` – the model is initialized from the [No Language Left Behind](https://github.com/facebookresearch/fairseq/tree/nllb) (NLLB)
   translation model. It is then further trained with a mix of translation examples and synthetic monolingual error correction examples
    in four languages. Additionally, it is fine-tuned multilingually with error correction examples, including 9,000 in Estonian. 
 * `GEC-synthetic-pretrain-ut-ft` – the model is first trained similarly to unidirectional machine translation models first trained
@@ -129,9 +129,9 @@ Spell-checking results benefit significantly from word replacements based on a l
 
 ### Correction list
 
-Now only available model is `errors_corrections_min3/correction_list.csv`. 
+At the moment, the only available error-correction list is `errors_corrections_min3/correction_list.csv`. 
 
-Model contains at least three times occured words with error from training material which have one possible correction. 
+The list is compiled based on the Estonian Interlanguage Corpus data (excluding the test material) and contains approx. 3,000 spelling errors that occur in multiple L2 texts, minimally 3 times in total. Only errors that could be assigned a single correction were included.
 
 
 ### Evaluation results
