@@ -73,6 +73,14 @@ The spell-checking model should have a matching configuration file with the foll
 - `model_bin` - path of the model binary file (usually named `{repository_name}.bin`). The path is relative to the root
   directory of the repository.
 
+
+## Correction list Model configuration
+
+The correction list model should have a matching configuration file with the following keys:
+
+- `huggingface` - name of the model on HuggingFace
+- `model_bin` - path of the model file (usually named {repository_name}.csv). The path is relative to the root directory of the repository.
+
 ## Available models
 
 We offer three GEC and three spell-checking models compatible with this repository.
@@ -117,6 +125,14 @@ While the model trained on Estonian Web 2019 has the highest error correction pr
 more modest precision. This trade-off is best balanced by the model trained on the 10:1 Reference Corpus + Web sample. All three models outperform the existing rule-based open-source speller Vabamorf and the spell-checker used in MS Word.
 
 Spell-checking results benefit significantly from word replacements based on a list of reoccurring learner errors and expert corrections. The list was compiled on the basis of the Estonian Interlanguage Corpus data (excluding the test material) and contains appr. 3,000 spelling errors. When using list-based preprocessing, our models achieve a higher error correction precision and F<sub>0.5</sub> score compared to Google Docs spelling and grammar checker.
+
+
+### Correction list
+
+Now only available model is errors_corrections_min3/correction_list.csv 
+
+Model contains at least three times occured words with error from training material which have one possible correction. 
+
 
 ### Evaluation results
 
