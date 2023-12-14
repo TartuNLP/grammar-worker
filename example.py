@@ -5,6 +5,7 @@ from dataclasses import asdict
 def run_multiple_correction_model(source_text):
     from gec_worker import GEC, read_gec_config
     from gec_worker import Speller, read_speller_config
+    from gec_worker import CorrectionList, read_correction_list_config
     from gec_worker.dataclasses import Request
     from gec_worker import MultiCorrector
 
@@ -13,11 +14,15 @@ def run_multiple_correction_model(source_text):
     gec = GEC(gec_config)
 
     # Load spelling model
-    speller_config = read_speller_config("models/spell_etnc19_reference_corpus_6000000_web_2019_600000.yaml")
+    speller_config = read_speller_config("models/spell_etnc19_reference_corpus_model_6000000_lines.yaml")
     speller = Speller(speller_config)
+
+    correction_list_config = read_correction_list_config('models/correction_list_min3.yaml')
+    correction_list = CorrectionList(correction_list_config)
 
     # Make model list and add models
     multi_corrector = MultiCorrector()
+    multi_corrector.add_corrector(correction_list)
     multi_corrector.add_corrector(speller)
     multi_corrector.add_corrector(gec)
 
@@ -29,4 +34,4 @@ def run_multiple_correction_model(source_text):
 
 
 if __name__ == '__main__':
-    print(run_multiple_correction_model("Juku joksis koolis. Aitüma."))
+    print(run_multiple_correction_model("Aga kõik see jõud on suuredes linnades just sellepärast, et väiksetes kohtades on pigem eakad inimesed ja ei ole eriti kultuurielu."))
