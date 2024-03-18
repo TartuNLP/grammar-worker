@@ -4,3 +4,4 @@ __pycache__/
 models/*
 !models/*.yaml 
 !models/README.md
+.env

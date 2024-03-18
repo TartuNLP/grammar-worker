@@ -18,6 +18,7 @@ class MQConfig(BaseSettings):
     connection_name: str = 'Grammar worker'
 
     class Config:
+        env_file = '.env'
         env_prefix = 'mq_'
 
 
@@ -28,6 +29,7 @@ class WorkerConfig(BaseSettings):
     max_input_length: int = 10000
 
     class Config:
+        env_file = '.env'
         env_prefix = 'worker_'
 
 

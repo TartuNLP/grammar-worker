@@ -45,7 +45,7 @@ class MQConsumer:
         is lost.
         """
         t = threading.current_thread()
-        while getattr(t, "consume", True):
+        while True:
             try:
                 self._connect()
                 setattr(t, "connected", True)
@@ -58,13 +58,11 @@ class MQConsumer:
                 sleep(5)
             except Exception as e:
                 logger.error(e)
-                logger.info('Unexpected error ocurred. Exiting...')
+                logger.info('Unexpected error occurred. Exiting...')
                 break
 
-        if not getattr(t, "consume", True):
-            logger.info('Interrupted by user. Exiting...')
-
-        self.channel.close()
+        if self.channel.is_open:
+            self.channel.close()
         setattr(t, "connected", False)
 
     def _connect(self):

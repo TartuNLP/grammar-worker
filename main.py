@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 import threading
 from argparse import ArgumentParser, FileType
 
@@ -22,20 +23,11 @@ parser.add_argument('--port', type=int, default='8000',
 
 args = parser.parse_args()
 
-app = FastAPI()
 mq_thread = threading.Thread()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-    allow_credentials=True,
-)
 
-
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     global mq_thread
 
     multi_corrector = MultiCorrector()
@@ -52,16 +44,21 @@ async def startup():
 
     consumer = MQConsumer(corrector=multi_corrector)
 
-    mq_thread = threading.Thread(target=consumer.start)
+    mq_thread = threading.Thread(target=consumer.start, daemon=True)
     mq_thread.connected = False
-    mq_thread.consume = True
     mq_thread.start()
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown():
-    global mq_thread
-    mq_thread.consume = False
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get('/health/readiness')

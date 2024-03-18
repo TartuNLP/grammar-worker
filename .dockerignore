@@ -11,3 +11,4 @@ models/
 !models/*.yaml
 .github
 *.ipynb
+.env

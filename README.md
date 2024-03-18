@@ -120,11 +120,15 @@ To skip unnecessary stages, BuildKit should be enabled.
 
 ## Manual / development setup
 
-For a manual setup, use a python environment with Python 3.10, install Swig 3.0 for JamSpell  and requirements from `requirements.txt`:
+For a manual setup, use a python environment with Git LFS, Python 3.10, install Swig 3.0 for JamSpell and requirements
+from `requirements.txt`. To use a GPU, make sure [CUDA](https://developer.nvidia.com/cuda-downloads) is installed.
 
 ```shell
+sudo apt-get install git-lfs
+git lfs install
 conda create -n grammar-worker python=3.10
-conda actvate grammar-worker
+conda activate grammar-worker
+pip install swig~=3.0.10
 pip install -r requirements.txt
 ```
 
@@ -137,8 +141,8 @@ To initialize the sentence splitting functionality, the following command should
 python -c "import nltk; nltk.download(\"punkt\")"
 ```
 
-RabbitMQ and PyTorch parameters should be configured with environment variables as described above. The worker can be
-started with:
+RabbitMQ and PyTorch parameters should be configured with environment variables as described above or in an `.env` file
+in the root folder of the repository. The worker can be started with:
 
 ```shell
 python main.py [--gec-model-config models/gec_model_config.yaml] [--spell-model-config models/spell_model_config.yaml] [--log-config logging/logging.ini]
