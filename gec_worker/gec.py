@@ -3,6 +3,8 @@ import os
 from typing import List
 import warnings
 
+import torch
+
 from .corrector import Corrector
 from .config import GECModelConfig
 from .modular_interface import ModularHubInterface
@@ -53,6 +55,9 @@ class GEC(Corrector):
                 task=self.model_config.task,
                 source_language=self.model_config.source_language,
                 target_language=self.model_config.target_language)
+
+        if torch.cuda.is_available():
+            self.model.cuda()
         
 
     def correct(self, sentences: List[str]) -> List[str]:
