@@ -6,7 +6,8 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from gec_worker import MQConsumer, GEC, read_gec_config, read_speller_config, Speller, MultiCorrector
+from gec_worker import MQConsumer, GEC, read_gec_config, read_speller_config, Speller, MultiCorrector, \
+    read_correction_list_config, CorrectionList
 
 parser = ArgumentParser(
     description="A neural grammatical error correction worker that processes incoming requests via "
@@ -16,6 +17,8 @@ parser.add_argument('--gec-model-config', type=FileType('r'), default='models/GE
                     help="The GEC model config file.")
 parser.add_argument('--spell-model-config', type=FileType('r'), default=None,
                     help="The Jamspell model config file.")
+parser.add_argument('--correction-list-config', type=FileType('r'), default='models/correction_list_min3.yaml',
+                    help="The correction list model config file.")
 parser.add_argument('--log-config', type=FileType('r'), default='logging/logging.ini',
                     help="Path to log config file.")
 parser.add_argument('--port', type=int, default='8000',
@@ -31,6 +34,11 @@ async def lifespan(_: FastAPI):
     global mq_thread
 
     multi_corrector = MultiCorrector()
+
+    if args.correction_list_config:
+        correction_list_config = read_correction_list_config(args.correction_list_config.name)
+        correction_list = CorrectionList(correction_list_config)
+        multi_corrector.add_corrector(correction_list)
 
     if args.spell_model_config:
         speller_config = read_speller_config(args.spell_model_config.name)

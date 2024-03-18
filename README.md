@@ -47,11 +47,13 @@ environment. The container should be configured using the following parameters:
           Longer requests will return validation errors.
 
 - Optional runtime flags (the `COMMAND` option):
-    - `--gec-model-config` - path to the GEC model config file. Compatible sample files are included in the `models/`
+    - `--gec-model-config` - path to the GEC model config file. Compatible files are included in the `models/`
       directory
       and the format is described in `models/README.md`.
-    - `--spell-model-config` - path to the spell-checking model config file. Compatible sample files are included in the
+    - `--spell-model-config` - path to the spell-checking model config file. Compatible files are included in the
       `models/` directory and the format is described in `models/README.md`.
+    - `--correction-list-config` - path to the correction list config file. Compatible files are included in the
+      `models/` directory and the format is described in `models/README.md
     - `--log-config` - path to logging config files (`logging/logging.ini` by default), `logging/debug.ini` can be used
       for debug-level logging
     - `--port` - port of the healthcheck probes (`8000` by default):
@@ -145,7 +147,7 @@ RabbitMQ and PyTorch parameters should be configured with environment variables 
 in the root folder of the repository. The worker can be started with:
 
 ```shell
-python main.py [--gec-model-config models/gec_model_config.yaml] [--spell-model-config models/spell_model_config.yaml] [--log-config logging/logging.ini]
+python main.py [--gec-model-config models/gec_model_config.yaml] [--spell-model-config models/spell_model_config.yaml] [--correction-list-config models/correction_list_min3.yaml] [--log-config logging/logging.ini]
 ```
 
 Or you can run the test script which does not require RabbitMQ:
