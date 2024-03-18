@@ -75,6 +75,16 @@ def read_speller_config(file_path: str) -> SpellModelConfig:
 
     return model_config
 
+class CorrectionListModelConfig(ModelConfig):
+    huggingface: str
+    model_bin: str
+
+def read_correction_list_config(file_path: str) -> CorrectionListModelConfig:
+    with open(file_path, 'r', encoding='utf-8') as f:
+        model_config = CorrectionListModelConfig(**yaml.load(f, Loader=SafeLoader))
+    return model_config
+
+
 
 mq_config = MQConfig()
 worker_config = WorkerConfig()
